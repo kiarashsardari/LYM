@@ -78,6 +78,49 @@ def best_tp(df):
     return (best_tps)
 
 
+def positions_list(df):
+    return (df['position']).tolist()
+
+
+def tps(df):
+    positions = positions_list(df)
+    lst = []
+    n = 0
+    for p in positions:
+
+        if str(p).startswith('TP'):
+            n+=1
+
+        else:
+            lst.append(n)
+            n = 0
+            
+    if n != 0:
+        lst.append(n)
+
+    return max(lst) if lst else None
+
+
+def sls(df):
+    positions = positions_list(df)
+    lst = []
+    n = 0
+    for p in positions:
+
+        if str(p).upper().strip() == 'SL':
+            n+=1
+
+        else:
+            lst.append(n)
+            n = 0
+            
+    if n != 0:
+        lst.append(n)
+
+    return max(lst) if lst else None
+
+
+
 '''def analyze_win_rate(df):
     for s,groupe in grouped_strategies:
         print(df[df['strategy'].isin([s]) & df['position'].isin(['SL'])])
