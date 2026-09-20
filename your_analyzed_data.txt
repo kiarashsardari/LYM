@@ -1,38 +1,38 @@
 --- Total trades per strategy ---
-B    38
-H    31
+G    34
 C    28
-A    27
-D    26
-F    22
-G    22
-E    21
+D    27
+F    27
+B    26
+H    26
+E    25
+A    22
 
 
 --- Win rates --- 
 
-Strategy: A | Stop Loss: 11 | Take Profit: 16 | Win Rate: 59.259 % |
+Strategy: A | Stop Loss: 7 | Take Profit: 15 | Win Rate: 68.182 % |
 
 
-Strategy: B | Stop Loss: 12 | Take Profit: 26 | Win Rate: 68.421 % |
+Strategy: B | Stop Loss: 9 | Take Profit: 17 | Win Rate: 65.385 % |
 
 
-Strategy: C | Stop Loss: 10 | Take Profit: 18 | Win Rate: 64.286 % |
+Strategy: C | Stop Loss: 7 | Take Profit: 21 | Win Rate: 75.0 % |
 
 
-Strategy: D | Stop Loss: 11 | Take Profit: 15 | Win Rate: 57.692 % |
+Strategy: D | Stop Loss: 8 | Take Profit: 19 | Win Rate: 70.37 % |
 
 
-Strategy: E | Stop Loss: 7 | Take Profit: 14 | Win Rate: 66.667 % |
+Strategy: E | Stop Loss: 10 | Take Profit: 15 | Win Rate: 60.0 % |
 
 
-Strategy: F | Stop Loss: 4 | Take Profit: 18 | Win Rate: 81.818 % |
+Strategy: F | Stop Loss: 9 | Take Profit: 18 | Win Rate: 66.667 % |
 
 
-Strategy: G | Stop Loss: 6 | Take Profit: 16 | Win Rate: 72.727 % |
+Strategy: G | Stop Loss: 12 | Take Profit: 22 | Win Rate: 64.706 % |
 
 
-Strategy: H | Stop Loss: 8 | Take Profit: 23 | Win Rate: 74.194 % |
+Strategy: H | Stop Loss: 6 | Take Profit: 20 | Win Rate: 76.923 % |
 
 
 --- Exit rates --- 
@@ -41,35 +41,52 @@ position : (count × andis) ÷ number of trades = exit rate %
 
 SL : 0.0 %
 
-TP1 : 7.4 %
+TP1 : 8.4 %
 
-TP2 : 67.0 %
+TP2 : 62.3 %
 
-TP3 : 36.3 %
+TP3 : 29.3 %
 
-TP4 : 11.2 %
+TP4 : 16.7 %
 
-TP5 : 4.7 %
+TP5 : 11.6 %
 
-TP6 : 11.2 %
+TP6 : 8.4 %
 
-TP7 : 3.3 %
+TP7 : 16.3 %
 
-TP8 : 11.2 %
+TP8 : 7.4 %
 
-TP9 : 29.3 %
+TP9 : 4.2 %
 
-TP10 : 23.3 %
+TP10 : 9.3 %
+
+TP11 : 10.2 %
+
+TP12 : 22.3 %
 
 TP13 : 6.0 %
 
-TP14 : 6.5 %
+TP14 : 13.0 %
 
 TP15 : 7.0 %
 
-TP19 : 8.8 %
+TP16 : 14.9 %
+
+TP18 : 8.4 %
+
+TP20 : 9.3 %
 
 --- Best TPs --- 
 
 TP2
 
+--- Max TPs --- 
+
+15
+
+--- Max SLs --- 
+
+4
+
+--- That's it ---
