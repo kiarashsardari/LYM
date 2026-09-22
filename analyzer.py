@@ -10,7 +10,7 @@ def count_strategies(df):
 
 
 # نرخ برد
-def analyze_win_rate(df):
+def analyze_win_rate_tp1(df):
 
     # یک سری از هر استراتژی و تعداد اس ال های اون
     sl_size = (df[df['position'] == 'SL']).groupby('strategy').size().items()
@@ -66,8 +66,8 @@ def tp_exit_rate(df):
     p_count = position_count(df).items()
     pos_rate = {}
     for pos, count in p_count:
-        andis = int(pos[2:]) if str(pos).startswith('TP') else 0
-        pos_rate[pos] = ((count * andis)/trades_count)*100
+        andis = int(pos[2:]) if str(pos).startswith('TP') else 1
+        pos_rate[pos] = (count * andis)
     return dict(sorted(pos_rate.items(), key=sort_key))
 
 
