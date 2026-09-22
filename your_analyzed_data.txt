@@ -1,92 +1,95 @@
+
+We'll use the sample dataset... (my_dataset.csv) 
+
 --- Total trades per strategy ---
-G    34
-C    28
-D    27
-F    27
-B    26
-H    26
-E    25
-A    22
+F    55
+D    50
+A    50
+E    48
+B    48
+C    40
+G    40
+H    34
 
 
 --- Win rates --- 
 
-Strategy: A | Stop Loss: 7 | Take Profit: 15 | Win Rate: 68.182 % |
+Strategy: A | Stop Loss: 16 | Take Profit: 34 | Win Rate: 68.0 % |
 
 
-Strategy: B | Stop Loss: 9 | Take Profit: 17 | Win Rate: 65.385 % |
+Strategy: B | Stop Loss: 19 | Take Profit: 29 | Win Rate: 60.417 % |
 
 
-Strategy: C | Stop Loss: 7 | Take Profit: 21 | Win Rate: 75.0 % |
+Strategy: C | Stop Loss: 10 | Take Profit: 30 | Win Rate: 75.0 % |
 
 
-Strategy: D | Stop Loss: 8 | Take Profit: 19 | Win Rate: 70.37 % |
+Strategy: D | Stop Loss: 15 | Take Profit: 35 | Win Rate: 70.0 % |
 
 
-Strategy: E | Stop Loss: 10 | Take Profit: 15 | Win Rate: 60.0 % |
+Strategy: E | Stop Loss: 15 | Take Profit: 33 | Win Rate: 68.75 % |
 
 
-Strategy: F | Stop Loss: 9 | Take Profit: 18 | Win Rate: 66.667 % |
+Strategy: F | Stop Loss: 16 | Take Profit: 39 | Win Rate: 70.909 % |
 
 
-Strategy: G | Stop Loss: 12 | Take Profit: 22 | Win Rate: 64.706 % |
+Strategy: G | Stop Loss: 15 | Take Profit: 25 | Win Rate: 62.5 % |
 
 
-Strategy: H | Stop Loss: 6 | Take Profit: 20 | Win Rate: 76.923 % |
+Strategy: H | Stop Loss: 12 | Take Profit: 22 | Win Rate: 64.706 % |
 
 
---- Exit rates --- 
+--- Number of rewards --- 
 
-position : (count × andis) ÷ number of trades = exit rate % 
+position : count × andis = exit rate 
 
-SL : 0.0 %
+Number of SLs : 118 
 
-TP1 : 8.4 %
+TP1 rewards : 32 
 
-TP2 : 62.3 %
+TP2 rewards : 224 
 
-TP3 : 29.3 %
+TP3 rewards : 111 
 
-TP4 : 16.7 %
+TP4 rewards : 40 
 
-TP5 : 11.6 %
+TP5 rewards : 20 
 
-TP6 : 8.4 %
+TP6 rewards : 36 
 
-TP7 : 16.3 %
+TP7 rewards : 63 
 
-TP8 : 7.4 %
+TP8 rewards : 48 
 
-TP9 : 4.2 %
+TP9 rewards : 36 
 
-TP10 : 9.3 %
+TP10 rewards : 60 
 
-TP11 : 10.2 %
+TP11 rewards : 44 
 
-TP12 : 22.3 %
+TP12 rewards : 24 
 
-TP13 : 6.0 %
+TP13 rewards : 65 
 
-TP14 : 13.0 %
+TP14 rewards : 28 
 
-TP15 : 7.0 %
+TP16 rewards : 16 
 
-TP16 : 14.9 %
+TP17 rewards : 68 
 
-TP18 : 8.4 %
+TP18 rewards : 18 
 
-TP20 : 9.3 %
+TP19 rewards : 38 
 
---- Best TPs --- 
+--- Optimized TPs --- 
 
 TP2
 
---- Max TPs --- 
+--- Max consecutive wins --- 
 
-15
+13
 
---- Max SLs --- 
+--- Max consecutive losses --- 
 
-4
+5
 
---- That's it ---
+--- Good luck! ---
