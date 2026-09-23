@@ -2,71 +2,71 @@
 We'll use the sample dataset... (my_dataset.csv) 
 
 --- Total trades per strategy ---
-F    55
-D    50
-A    50
-E    48
-B    48
-C    40
-G    40
-H    34
+A    52
+C    50
+H    48
+E    44
+G    43
+B    43
+D    43
+F    42
 
 
 --- Win rates --- 
 
-Strategy: A | Stop Loss: 16 | Take Profit: 34 | Win Rate: 68.0 % |
+Strategy: A | Stop Loss: 14 | Take Profit: 38 | Win Rate: 73.077 % |
 
 
-Strategy: B | Stop Loss: 19 | Take Profit: 29 | Win Rate: 60.417 % |
+Strategy: B | Stop Loss: 17 | Take Profit: 26 | Win Rate: 60.465 % |
 
 
-Strategy: C | Stop Loss: 10 | Take Profit: 30 | Win Rate: 75.0 % |
+Strategy: C | Stop Loss: 18 | Take Profit: 32 | Win Rate: 64.0 % |
 
 
-Strategy: D | Stop Loss: 15 | Take Profit: 35 | Win Rate: 70.0 % |
+Strategy: D | Stop Loss: 17 | Take Profit: 26 | Win Rate: 60.465 % |
 
 
-Strategy: E | Stop Loss: 15 | Take Profit: 33 | Win Rate: 68.75 % |
+Strategy: E | Stop Loss: 12 | Take Profit: 32 | Win Rate: 72.727 % |
 
 
-Strategy: F | Stop Loss: 16 | Take Profit: 39 | Win Rate: 70.909 % |
+Strategy: F | Stop Loss: 12 | Take Profit: 30 | Win Rate: 71.429 % |
 
 
-Strategy: G | Stop Loss: 15 | Take Profit: 25 | Win Rate: 62.5 % |
+Strategy: G | Stop Loss: 18 | Take Profit: 25 | Win Rate: 58.14 % |
 
 
-Strategy: H | Stop Loss: 12 | Take Profit: 22 | Win Rate: 64.706 % |
+Strategy: H | Stop Loss: 17 | Take Profit: 31 | Win Rate: 64.583 % |
 
 
 --- Number of rewards --- 
 
 position : count × andis = exit rate 
 
-Number of SLs : 118 
+Number of SLs : 125 
 
-TP1 rewards : 32 
+TP1 rewards : 28 
 
-TP2 rewards : 224 
+TP2 rewards : 212 
 
-TP3 rewards : 111 
+TP3 rewards : 105 
 
-TP4 rewards : 40 
+TP4 rewards : 32 
 
-TP5 rewards : 20 
+TP5 rewards : 35 
 
-TP6 rewards : 36 
+TP6 rewards : 78 
 
-TP7 rewards : 63 
+TP7 rewards : 49 
 
-TP8 rewards : 48 
+TP8 rewards : 40 
 
-TP9 rewards : 36 
+TP9 rewards : 72 
 
-TP10 rewards : 60 
+TP10 rewards : 40 
 
 TP11 rewards : 44 
 
-TP12 rewards : 24 
+TP12 rewards : 36 
 
 TP13 rewards : 65 
 
@@ -74,11 +74,9 @@ TP14 rewards : 28
 
 TP16 rewards : 16 
 
-TP17 rewards : 68 
-
 TP18 rewards : 18 
 
-TP19 rewards : 38 
+TP19 rewards : 57 
 
 --- Optimized TPs --- 
 
@@ -86,10 +84,10 @@ TP2
 
 --- Max consecutive wins --- 
 
-13
+10
 
 --- Max consecutive losses --- 
 
-5
+4
 
 --- Good luck! ---
