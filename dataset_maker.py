@@ -10,4 +10,4 @@ def make_dataset():
         ,'position': positions
         ,'strategy': strategies
     }
-    (pd.DataFrame(data)).to_csv(r'my_dataset2.csv', index=False, encoding='utf-8-sig')
+    (pd.DataFrame(data)).to_csv(r'my_dataset.csv', index=False, encoding='utf-8-sig')
