@@ -2,92 +2,103 @@
 We'll use the sample dataset... (my_dataset.csv) 
 
 --- Total trades per strategy ---
-A    52
+
+Strategy  Count
+
+E    52
 C    50
-H    48
-E    44
-G    43
-B    43
-D    43
-F    42
-
-
---- Win rates --- 
-
-Strategy: A | Stop Loss: 14 | Take Profit: 38 | Win Rate: 73.077 % |
-
-
-Strategy: B | Stop Loss: 17 | Take Profit: 26 | Win Rate: 60.465 % |
-
-
-Strategy: C | Stop Loss: 18 | Take Profit: 32 | Win Rate: 64.0 % |
-
-
-Strategy: D | Stop Loss: 17 | Take Profit: 26 | Win Rate: 60.465 % |
-
-
-Strategy: E | Stop Loss: 12 | Take Profit: 32 | Win Rate: 72.727 % |
-
-
-Strategy: F | Stop Loss: 12 | Take Profit: 30 | Win Rate: 71.429 % |
-
-
-Strategy: G | Stop Loss: 18 | Take Profit: 25 | Win Rate: 58.14 % |
-
-
-Strategy: H | Stop Loss: 17 | Take Profit: 31 | Win Rate: 64.583 % |
-
+G    48
+F    47
+A    45
+H    42
+D    41
+B    40
 
 --- Number of rewards --- 
 
-position : count × andis = exit rate 
+Position rewards : count × andis = reward 
 
-Number of SLs : 125 
+Number of SLs : 104 
 
-TP1 rewards : 28 
+TP1 rewards : 37 
 
-TP2 rewards : 212 
+TP2 rewards : 220 
 
-TP3 rewards : 105 
+TP3 rewards : 111 
 
-TP4 rewards : 32 
+TP4 rewards : 24 
 
 TP5 rewards : 35 
 
-TP6 rewards : 78 
+TP6 rewards : 36 
 
-TP7 rewards : 49 
+TP7 rewards : 28 
 
-TP8 rewards : 40 
+TP8 rewards : 80 
 
 TP9 rewards : 72 
 
-TP10 rewards : 40 
+TP10 rewards : 50 
 
-TP11 rewards : 44 
+TP11 rewards : 55 
 
-TP12 rewards : 36 
+TP12 rewards : 72 
 
-TP13 rewards : 65 
+TP13 rewards : 52 
 
-TP14 rewards : 28 
+TP14 rewards : 42 
 
-TP16 rewards : 16 
+TP15 rewards : 60 
 
-TP18 rewards : 18 
+TP16 rewards : 32 
 
-TP19 rewards : 57 
+TP17 rewards : 51 
 
---- Optimized TPs --- 
+TP18 rewards : 36 
 
-TP2
+TP19 rewards : 38 
+
+--- Win rate with optimized TP(s) --- 
+
+Position : Win rate 
+
+TP2 : 61.37 %  << suggested
+
+--- Win rates of each strategy with TP1 --- 
+
+Strategy | Stop Loss | Take Profit | Win Rate |
+
+
+Strategy: A | Stop Loss: 14 | Take Profit: 31 | Win Rate: 68.89 % |
+
+
+Strategy: B | Stop Loss: 10 | Take Profit: 30 | Win Rate: 75.0 % |
+
+
+Strategy: C | Stop Loss: 13 | Take Profit: 37 | Win Rate: 74.0 % |
+
+
+Strategy: D | Stop Loss: 8 | Take Profit: 33 | Win Rate: 80.49 % |
+
+
+Strategy: E | Stop Loss: 19 | Take Profit: 33 | Win Rate: 63.46 % |
+
+
+Strategy: F | Stop Loss: 12 | Take Profit: 35 | Win Rate: 74.47 % |
+
+
+Strategy: G | Stop Loss: 13 | Take Profit: 35 | Win Rate: 72.92 % |
+
+
+Strategy: H | Stop Loss: 15 | Take Profit: 27 | Win Rate: 64.29 % |
+
 
 --- Max consecutive wins --- 
 
-10
+18
 
 --- Max consecutive losses --- 
 
-4
+5
 
 --- Good luck! ---
