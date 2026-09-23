@@ -5,8 +5,7 @@ def count_strategies(df):
     return c
 
 # نرخ برد
-def analyze_win_rate_tp1(df):
-
+def analyze_win_rate_by_tp1(df):
     # یک سری از هر استراتژی و تعداد اس ال های اون
     sl_size = (df[df['position'] == 'SL']).groupby('strategy').size().items()
     # یک دیکشنری از هر استراتژی و تعداد تی پی های اون
@@ -25,7 +24,7 @@ def analyze_win_rate_tp1(df):
         dic['Strategy'] = strtgy
         dic['SL count'] = int(sl_count)
         dic['TP count'] = tp_count
-        dic['Win Rate'] = float(f'{win_percent:.3f}')
+        dic['Win Rate'] = float(f'{win_percent:.2f}')
         # تولید دیکشنری از تعداد اس ال های هر استراتژی
         sl_dic[strtgy] = sl_count
         main_lst.append(dic)
@@ -45,17 +44,19 @@ def analyze_win_rate_tp1(df):
     return main_lst + main_lst2
 
 
+# کلید مرتب سازی
 def sort_key(p_r):
     return 0 if p_r[0] == 'SL' else int(p_r[0][2:])
 
 
 # تعداد هر نوع پوزیشن
-def position_count(df):
+def positions_count(df):
     return (df.groupby('position').size())
 
 
+# محاسبه تعداد اس ال ها و محاسبه ریوارد های هر تی پی 
 def tp_rewards(df):
-    p_count = position_count(df).items()
+    p_count = positions_count(df).items()
     pos_rate = {}
     for pos, count in p_count:
         andis = int(pos[2:]) if str(pos).startswith('TP') else 1
@@ -63,23 +64,65 @@ def tp_rewards(df):
     return dict(sorted(pos_rate.items(), key=sort_key))
 
 
-def best_tp(df):
+# یافتن تی پی بهینه براساس پرتعداد بودن و اندیس کوچکتری داشتن
+def optimized_tp(df):
     rewards_tps = (tp_rewards(df))
     if 'SL' in rewards_tps:
         del rewards_tps['SL']
     if not rewards_tps:
-        return []
+        return (dict())
     rewards = (rewards_tps.values())
     m = max(rewards)
-    best_tps = [pos for pos, reward in rewards_tps.items() if reward == m]
+    best_tps = {pos : reward 
+                for pos, reward in rewards_tps.items() if reward == m}
     return (best_tps)
 
 
+# ساخت یک لیست از اندیس های پوزیشن های ورودی 
+def andises_list(list_of_positions):
+    andises = []
+
+    for pos in list_of_positions :
+        andises.append(int(pos[2:]))
+    
+    return andises
+
+
+# تعداد تی پی های بهینه و تی پی های بزرگتر از اون
+def count_best_tps(df):
+    tps_counts = {}
+    tps_rewards = optimized_tp(df)
+    if not tps_rewards:
+        return {}
+
+    for tp, _ in tps_rewards.items():
+        andis = int(tp[2:])
+        tdf = df[df['position'] != 'SL']
+        best_df = tdf[((tdf['position']).str.startswith('TP')) & ((tdf['position']).str[2:].astype(int)>=andis)]
+        tps_counts[tp] = int(best_df['position'].value_counts().sum())
+
+    return tps_counts
+
+
+# محسابه وین ریت بر اساس تی پی های بهینه
+def analyze_win_rate_by_best_tp(df):
+    trades_count = len(df)
+    tps_rates = {}
+    if trades_count == 0:
+        return {}
+    tps_counts = count_best_tps(df)
+    for tp, count in tps_counts.items():
+        tps_rates[tp] = (count/trades_count)*100
+    return tps_rates
+
+
+# لیست پوزیشن ها 
 def positions_list(df):
     return (df['position']).tolist()
 
 
-def tps(df):
+# تعداد بیشترین تی پی های متوالی 
+def consecutive_wins(df):
     positions = positions_list(df)
     lst = []
     n = 0
@@ -98,7 +141,8 @@ def tps(df):
     return max(lst) if lst else None
 
 
-def sls(df):
+# تعداد بیشترین اس ال های متوالی 
+def consecutive_losses(df):
     positions = positions_list(df)
     lst = []
     n = 0
