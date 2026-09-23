@@ -38,11 +38,11 @@ def out(text):
 def get_input():
     if os.path.exists('SAVED_ADDRESS.txt') and os.path.exists(get_address()):
         old_address = get_address()
-        print(f'\nIf you want to analyze {old_address} again, type: << old >> ...\n')
+        print(f'\nIf you want to analyze {old_address} again, type: << O >> ...\n')
         inp = input(r"Enter the address of your xlsx file (Sample: D:\trades\data\your_dataset): ")
         print('')            
 
-        if inp.lower() == 'old':
+        if inp.lower() == 'o':
             address = old_address
 
         else:
@@ -72,51 +72,59 @@ def use_sample_or_exit():
 def main(df):
     #Total trades per strategy
     cs = (a.count_strategies(df)).to_string(header=None)
-    out(f'--- Total trades per strategy ---\n{cs}\n\n')
+    out(f'--- Total trades per strategy ---\n')
+    out('Strategy  Count\n')
+    out(cs+'\n')
 
-    #Analyze win rate
-    input('press enter to show << Win rates >>...')
-    print('')
-    out('--- Win rates --- \n')
-    for dic in (a.analyze_win_rate_tp1(df)):
-        wr = dic['Win Rate']
-        tpc = dic['TP count']
-        slc = dic['SL count']
-        s = dic['Strategy']
-        out(f"Strategy: {s} | Stop Loss: {slc} | Take Profit: {tpc} | Win Rate: {wr} % |\n\n")
 
     #Analyze Number of rewards
     input('press enter to show << Number of rewards >>...')
     print('')
     out('--- Number of rewards --- \n')
     grp = a.tp_rewards(df).items()
-    out('position : count × andis = exit rate \n')
+    out('Position rewards : count × andis = reward \n')
     for pos, rate in grp:
         if str(pos).startswith('TP'):
             out(f'{pos} rewards : {rate} \n')
         else:
             out(f'Number of {pos}s : {rate} \n')            
 
-    # Analyze Optimized TPs
-    input('press enter to show << Optimized TPs >>...')
+    # Analyze win rate with Optimized TPs
+    input('press enter to show << Win rate with optimized TP(s) >>...')
     print('')
-    out('--- Optimized TPs --- \n')
-    lst = a.best_tp(df)
-    for i in lst:
-        if i != 'SL':
-            out(f'{i}\n')
+    out('--- Win rate with optimized TP(s) --- \n')
+    out("Position : Win rate \n")
+    btps_rates = a.analyze_win_rate_by_best_tp(df)
+    best_andis = min(a.andises_list(btps_rates.keys()))
+    for btp, rate in btps_rates.items():
+        if int(str(btp)[2:]) == best_andis:
+            out(f"{btp} : {rate:.2f} %  << suggested\n")
+        else:
+            out(f"{btp} : {rate:.2f} %\n")
+    
+    #Analyze Win rates of each strategy with TP1
+    input('press enter to show << Win rates of each strategy with TP1 >>...')
+    print('')
+    out('--- Win rates of each strategy with TP1 --- \n')
+    out("Strategy | Stop Loss | Take Profit | Win Rate |\n\n")
+    for dic in (a.analyze_win_rate_by_tp1(df)):
+        wr = dic['Win Rate']
+        tpc = dic['TP count']
+        slc = dic['SL count']
+        s = dic['Strategy']
+        out(f"Strategy: {s} | Stop Loss: {slc} | Take Profit: {tpc} | Win Rate: {wr} % |\n\n")
 
     # Consecutive Wins
     input('press enter to show << Max consecutive wins >>...')
     print('')
     out('--- Max consecutive wins --- \n')
-    out(f'{a.tps(df)}\n')
+    out(f'{a.consecutive_wins(df)}\n')
 
     # Maximum consecutive losses
     input('press enter to show << Max consecutive losses >>...')
     print('')
     out('--- Max consecutive losses --- \n')
-    out(f'{a.sls(df)}\n')
+    out(f'{a.consecutive_losses(df)}\n')
     out("--- Good luck! ---")
 
 
