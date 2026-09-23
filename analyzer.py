@@ -1,13 +1,8 @@
 # تعداد هر استراتژی
 def count_strategies(df):
-    try:
-        # تعداد هر آیتم از ستون استراتژی
-        c = df['strategy'].value_counts()
-        return c
-    except KeyError:
-        # اگر ستون استراتژی موجود نبود ارور بده
-        return('Error: Strategy column does not exist...')
-
+    # تعداد هر آیتم از ستون استراتژی
+    c = df['strategy'].value_counts()
+    return c
 
 # نرخ برد
 def analyze_win_rate_tp1(df):
@@ -34,8 +29,6 @@ def analyze_win_rate_tp1(df):
         # تولید دیکشنری از تعداد اس ال های هر استراتژی
         sl_dic[strtgy] = sl_count
         main_lst.append(dic)
-    ''' تعریف دوباره ی سری از تعداد تی پی های هر استراتژی
-    چون با تبدیل اون به دیکشنری دیگه خالی میشه و برای همین مجبوریم دوباره تعریفش کنیم'''
     tp_size_items = (df[df['position'].str.startswith('TP')]).groupby('strategy').size().items()
     main_lst2 = []
     # اسم هر استراتژی و تعداد تی پی های اون
@@ -61,8 +54,7 @@ def position_count(df):
     return (df.groupby('position').size())
 
 
-def tp_exit_rate(df):
-    trades_count = (len(df['position']))
+def tp_rewards(df):
     p_count = position_count(df).items()
     pos_rate = {}
     for pos, count in p_count:
@@ -72,7 +64,7 @@ def tp_exit_rate(df):
 
 
 def best_tp(df):
-    grp = tp_exit_rate(df)
+    grp = tp_rewards(df)
     m = max(grp.values())
     best_tps = [pos for pos, rate in grp.items() if rate == m]
     return (best_tps)
@@ -118,21 +110,3 @@ def sls(df):
         lst.append(n)
 
     return max(lst) if lst else None
-
-
-
-'''def analyze_win_rate(df):
-    for s,groupe in grouped_strategies:
-        print(df[df['strategy'].isin([s]) & df['position'].isin(['SL'])])
-        print(groupe[groupe['position'] == 'SL'])
-    print(len(df['position']))
-    c1 = df['strategy']
-    c = df['strategy'].value_counts()
-    strategies_name = c.index
-    strategies_count = c.iloc[:]
-    positions = list(j for j in df['position'] if j!='SL')
-    #.startswith('TP')
-    for p in positions:
-        for o in strategies_name:
-            print(df[df['strategy'].isin([o]) & df['position'].isin([p])])
-    print(df[c1.isin(['s']) & df['position'].isin(['SL'])])'''
