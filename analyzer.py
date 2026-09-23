@@ -64,9 +64,14 @@ def tp_rewards(df):
 
 
 def best_tp(df):
-    grp = tp_rewards(df)
-    m = max(grp.values())
-    best_tps = [pos for pos, rate in grp.items() if rate == m]
+    rewards_tps = (tp_rewards(df))
+    if 'SL' in rewards_tps:
+        del rewards_tps['SL']
+    if not rewards_tps:
+        return []
+    rewards = (rewards_tps.values())
+    m = max(rewards)
+    best_tps = [pos for pos, reward in rewards_tps.items() if reward == m]
     return (best_tps)
 
 
