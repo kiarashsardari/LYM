@@ -111,6 +111,8 @@ def analyze_win_rate_by_best_tp(df):
     if trades_count == 0:
         return {}
     tps_counts = count_best_tps(df)
+    if not tps_counts:
+        return {}
     for tp, count in tps_counts.items():
         tps_rates[tp] = (count/trades_count)*100
     return tps_rates
