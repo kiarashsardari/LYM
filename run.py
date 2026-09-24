@@ -54,7 +54,7 @@ def get_input():
         address = address if '.xlsx' in address else address+'.xlsx'
     (pd.read_excel(address, index_col=False)).to_csv(r'your_dataset.csv',index=False, encoding='utf-8-sig')
     save_address(address)
-    return pd.read_csv(r'your_dataset.csv')
+    return pd.read_csv(r'your_dataset.csv',encoding='utf-8-sig')
 
 
 def use_sample_or_exit():
@@ -63,7 +63,7 @@ def use_sample_or_exit():
     if inp.upper() == 'Y':
         out("\nWe'll use the sample dataset... (my_dataset.csv) \n")
         md()
-        return pd.read_csv(r'my_dataset.csv', index_col=False)
+        return pd.read_csv(r'my_dataset.csv', index_col=False,encoding='utf-8-sig')
     else:
         out('Program closed...')
         raise SystemExit
@@ -95,12 +95,15 @@ def main(df):
     out('--- Win rate with optimized TP(s) --- \n')
     out("Position : Win rate \n")
     btps_rates = a.analyze_win_rate_by_best_tp(df)
-    best_andis = min(a.andises_list(btps_rates.keys()))
-    for btp, rate in btps_rates.items():
-        if int(str(btp)[2:]) == best_andis:
-            out(f"{btp} : {rate:.2f} %  << suggested\n")
-        else:
-            out(f"{btp} : {rate:.2f} %\n")
+    if not btps_rates:
+        out("There's no any TPs...\n")
+    else:
+        best_andis = min(a.andises_list(btps_rates.keys()))
+        for btp, rate in btps_rates.items():
+            if int(str(btp)[2:]) == best_andis:
+                out(f"{btp} : {rate:.2f} %  << suggested\n")
+            else:
+                out(f"{btp} : {rate:.2f} %\n")
     
     #Analyze Win rates of each strategy with TP1
     input('press enter to show << Win rates of each strategy with TP1 >>...')
@@ -142,8 +145,9 @@ def run():
     finally:
         input('\npress enter to Save & Exit...')
         print('')
-
         file.close()
+        if os.path.exists(r'your_dataset.csv'):
+            os.remove(r'your_dataset.csv')
 
 if __name__ == '__main__':
     run()
