@@ -30,10 +30,10 @@ def save_address(input_address):
         f.write(input_address.strip())
 
 
-def out(text):
-    file.write(text + '\n')
-    print(text)
-
+def out(*texts):
+    for text in texts:
+        print(text)
+        file.write(str(text)+'\n')
 
 def get_input():
     if os.path.exists('SAVED_ADDRESS.txt') and os.path.exists(get_address()):
@@ -72,9 +72,9 @@ def use_sample_or_exit():
 def main(df):
     #Total trades per strategy
     cs = (a.count_strategies(df)).to_string(header=None)
-    out(f'--- Total trades per strategy ---\n')
-    out('Strategy  Count\n')
-    out(cs+'\n')
+    out(f'--- Total trades per strategy ---','\n')
+    out('Strategy  Count','\n')
+    out(cs,'\n')
 
 
     #Analyze Number of rewards
@@ -98,7 +98,7 @@ def main(df):
     if not btps_rates:
         out("There's no any TPs...\n")
     else:
-        best_andis = min(a.andises_list(btps_rates.keys()))
+        best_andis = min(list(map(a.find_andis, btps_rates.keys())))
         for btp, rate in btps_rates.items():
             if int(str(btp)[2:]) == best_andis:
                 out(f"{btp} : {rate:.2f} %  << suggested\n")
