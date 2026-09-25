@@ -18,8 +18,6 @@ except ImportError as e :
     raise SystemExit
 
 
-file = open(r'Analyze_For_You.txt', 'w', encoding='utf-8')
-
 def get_address():
     with open('SAVED_ADDRESS.txt', "r", encoding="utf-8") as f:
         x = f.read()
@@ -143,11 +141,22 @@ def run():
         print('\nYou can see this analyze again in this file : << Analyze_For_You.txt >>\n')
 
     finally:
-        input('\npress enter to Save & Exit...')
         print('')
         file.close()
         if os.path.exists(r'your_dataset.csv'):
             os.remove(r'your_dataset.csv')
 
+
+def exit_or_continue():
+    global file
+    while True:
+        file = open(r'Analyze_For_You.txt', 'w', encoding='utf-8')
+        run()
+        inpt = input('Press enter to exit... (C to Continue) ')
+        if inpt.lower() != 'c':
+            print('\nbye...\n')
+            raise SystemExit
+    
+
 if __name__ == '__main__':
-    run()
+    exit_or_continue()
