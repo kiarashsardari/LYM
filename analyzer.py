@@ -59,7 +59,7 @@ def tp_rewards(df):
     p_count = positions_count(df).items()
     pos_rate = {}
     for pos, count in p_count:
-        andis = int(pos[2:]) if str(pos).startswith('TP') else 1
+        andis = find_andis(pos)
         pos_rate[pos] = (count * andis)
     return dict(sorted(pos_rate.items(), key=sort_key))
 
@@ -78,14 +78,9 @@ def optimized_tp(df):
     return (best_tps)
 
 
-# ساخت یک لیست از اندیس های پوزیشن های ورودی 
-def andises_list(list_of_positions):
-    andises = []
-
-    for pos in list_of_positions :
-        andises.append(int(pos[2:]))
-    
-    return andises
+# اندیس پوزیشن ورودی 
+def find_andis(position):    
+    return int(position[2:]) if str(position).startswith('TP') else 1
 
 
 # تعداد تی پی های بهینه و تی پی های بزرگتر از اون
@@ -96,7 +91,7 @@ def count_best_tps(df):
         return {}
 
     for tp, _ in tps_rewards.items():
-        andis = int(tp[2:])
+        andis = find_andis(tp)
         tdf = df[df['position'] != 'SL']
         best_df = tdf[((tdf['position']).str.startswith('TP')) & ((tdf['position']).str[2:].astype(int)>=andis)]
         tps_counts[tp] = int(best_df['position'].value_counts().sum())
