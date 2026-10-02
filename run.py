@@ -68,6 +68,7 @@ def use_sample_or_exit():
 
 
 def main(df):
+    df = a.sdf(df)
     #Total trades per strategy
     cs = (a.count_strategies(df)).to_string(header=None)
     out(f'--- Total trades per strategy ---','\n')
@@ -82,7 +83,7 @@ def main(df):
     grp = a.tp_rewards(df).items()
     out('Position rewards : count × andis = reward \n')
     for pos, rate in grp:
-        if str(pos).startswith('TP'):
+        if str(pos).startswith('tp'):
             out(f'{pos} rewards : {rate} \n')
         else:
             out(f'Number of {pos}s : {rate} \n')            
