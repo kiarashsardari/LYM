@@ -20,35 +20,35 @@ Position rewards : count × andis = reward
 
 Number of SLs : 79 
 
-TP1 rewards : 22 
+Number of TP1s : 22 
 
-TP2 rewards : 40 
+Number of TP2s : 40 
 
-TP3 rewards : 6 
+Number of TP3s : 6 
 
-TP4 rewards : 40 
+Number of TP4s : 40 
 
-TP5 rewards : 10 
+Number of TP5s : 10 
 
-TP6 rewards : 6 
+Number of TP6s : 6 
 
-TP7 rewards : 14 
+Number of TP7s : 14 
 
-TP8 rewards : 24 
+Number of TP8s : 24 
 
-TP9 rewards : 27 
+Number of TP9s : 27 
 
-TP10 rewards : 30 
+Number of TP10s : 30 
 
-TP11 rewards : 33 
+Number of TP11s : 33 
 
-TP12 rewards : 12 
+Number of TP12s : 12 
 
-TP14 rewards : 28 
+Number of TP14s : 28 
 
-TP16 rewards : 16 
+Number of TP16s : 16 
 
-TP17 rewards : 34 
+Number of TP17s : 34 
 
 --- Win rate with optimized TP(s) --- 
 
@@ -63,28 +63,28 @@ TP4 : 21.15 %
 Strategy | Stop Loss | Take Profit | Win Rate |
 
 
-Strategy: A | Stop Loss: 12 | Take Profit: 7 | Win Rate: 36.84 % |
+Strategy: A | Stop Loss: 0 | Take Profit: 7 | Win Rate: 100 % |
 
 
-Strategy: B | Stop Loss: 9 | Take Profit: 8 | Win Rate: 47.06 % |
+Strategy: B | Stop Loss: 0 | Take Profit: 8 | Win Rate: 100 % |
 
 
-Strategy: C | Stop Loss: 15 | Take Profit: 11 | Win Rate: 42.31 % |
+Strategy: C | Stop Loss: 0 | Take Profit: 11 | Win Rate: 100 % |
 
 
-Strategy: D | Stop Loss: 6 | Take Profit: 8 | Win Rate: 57.14 % |
+Strategy: D | Stop Loss: 0 | Take Profit: 8 | Win Rate: 100 % |
 
 
-Strategy: E | Stop Loss: 9 | Take Profit: 10 | Win Rate: 52.63 % |
+Strategy: E | Stop Loss: 0 | Take Profit: 10 | Win Rate: 100 % |
 
 
-Strategy: F | Stop Loss: 11 | Take Profit: 11 | Win Rate: 50.0 % |
+Strategy: F | Stop Loss: 0 | Take Profit: 11 | Win Rate: 100 % |
 
 
-Strategy: G | Stop Loss: 10 | Take Profit: 10 | Win Rate: 50.0 % |
+Strategy: G | Stop Loss: 0 | Take Profit: 10 | Win Rate: 100 % |
 
 
-Strategy: H | Stop Loss: 7 | Take Profit: 12 | Win Rate: 63.16 % |
+Strategy: H | Stop Loss: 0 | Take Profit: 12 | Win Rate: 100 % |
 
 
 --- Max consecutive wins --- 
