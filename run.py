@@ -3,7 +3,7 @@ try:
     from  dataset_maker import make_dataset as md
     import analyzer as a
 except ImportError as e:
-    print(f"The main program files were not found.\nPlease ensure that the files have been fully downloaded\nor are located in the correct path.\nThis is a file which had not been found: {e.name}")
+    print(f"The main program files were not found.\n\nPlease ensure that the files have been fully downloaded\nor are located in the correct path.\n\nThis is a file which had not been found: {e.name}\n\n")
     input('press enter to exit...')
     print('')
     raise SystemExit
@@ -12,7 +12,7 @@ try:
     import pandas as pd
     import numpy
 except ImportError as e :
-    print(f"Required library not installed: {e.name}\nInstall it with:  pip install {e.name}")
+    print(f"Required library not installed: {e.name}\n\nInstall it with:  pip install {e.name}\n\n\n")
     input('press enter to exit...')
     print('')
     raise SystemExit
