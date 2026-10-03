@@ -12,7 +12,7 @@
 - [شروع سریع](#quick-start)
 - [دیتاست نمونه](#sample-dataset)
 - [نمونه خروجی](#output-example)
-- [مرجع توابع](#functions-reference)
+- [توابع](#functions-reference)
 - [نحوه کار](#how-it-works)
 
 ---
@@ -167,7 +167,7 @@ Strategy: A | Stop Loss: 15 | Take Profit: 37 | Win Rate: 71.15 %
 ---
 
 <a id="functions-reference"></a>
-## 🔧 مرجع توابع
+## 🔧 توابع
 
 ### `analyzer.py`
 
