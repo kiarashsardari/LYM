@@ -12,6 +12,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
+[![openpyxl](https://img.shields.io/badge/openpyxl-3.0%2B-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)](https://openpyxl.readthedocs.io/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-4CAF50?style=for-the-badge)]()
 
 </div>
@@ -57,6 +58,7 @@ LYM/
 ├── run.py                →  نقطه ورود اصلی — مدیریت ورودی، تحلیل و خروجی
 ├── analyzer.py           →  توابع اصلی تحلیل (نرخ برد، پاداش‌ها، رکوردها و ...)
 ├── dataset_maker.py      →  تولید دیتاست نمونه CSV برای تست
+├── requirements.txt      →  فهرست پیش‌نیازهای پایتونی پروژه
 │
 ├── SAVED_ADDRESS.txt     →  خودکار ساخته می‌شود — مسیر آخرین فایل اکسل
 ├── my_dataset.csv        →  خودکار ساخته می‌شود — دیتاست نمونه
@@ -89,11 +91,34 @@ cd LYM
 
 ### نصب پکیج‌های موردنیاز
 
+تمام پیش‌نیازها در فایل `requirements.txt` تعریف شده‌اند. برای نصب یک‌جا، در ریشهٔ پروژه اجرا کنید:
+
 ```bash
-pip install pandas numpy openpyxl
+pip install -r requirements.txt
+```
+
+محتوای `requirements.txt`:
+
+```txt
+# Python >= 3.8
+pandas>=1.3
+numpy>=1.20
+openpyxl>=3.0
 ```
 
 > **نکته:** پکیج `openpyxl` برای خواندن فایل‌های `.xlsx` ضروری است.
+
+> 💡 در صورت نیاز می‌توانید ابتدا `pip` را به‌روزرسانی کنید:
+>
+> ```bash
+> python -m pip install --upgrade pip
+> ```
+
+اگر نمی‌خواهید از `requirements.txt` استفاده کنید، نصب دستی هم کافی است:
+
+```bash
+pip install pandas numpy openpyxl
+```
 
 ---
 
@@ -278,7 +303,7 @@ python run.py
               (اگر فایل پیدا نشد)
 
    ┌───────────────────┐       ┌──────────────────┐
-   │ dataset_maker.py  │ ───►  │  my_dataset.csv  │ ───►  (همان مسیر)
+   │ dataset_maker.py  │ ───►  │  my_dataset.csv  │  ───►  (همان مسیر)
    └───────────────────┘       └──────────────────┘
 ```
 
@@ -316,6 +341,6 @@ TP بهینه، TP‌ای است که **بیشترین پاداش کل** را د
 
 <div align="center">
 
-**ساخته‌شده با پایتون — بدون هیچ وابستگی خارجی به‌جز `pandas` و `numpy`**
+**ساخته‌شده با پایتون — با وابستگی خارجی به `pandas`، `numpy` و `openpyxl` (تعریف‌شده در `requirements.txt`)**
 
 </div>
