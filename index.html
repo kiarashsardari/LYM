@@ -120,6 +120,30 @@
     display:block;
   }
 
+  /* ---------- Repo CTA button ---------- */
+  .repo-cta{
+    text-align:center;
+    margin:10px 0 0;
+    font-size:.98rem;
+    font-weight:700;
+  }
+
+  .repo-cta a{
+    display:inline-block;
+    padding:8px 18px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--bg-alt);
+    color:var(--accent);
+    transition:background .15s, border-color .15s;
+  }
+
+  .repo-cta a:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    text-decoration:none;
+  }
+
   /* ---------- TOC ---------- */
   .toc{
     text-align:center;
@@ -331,6 +355,9 @@
     </p>
 
     <div class="badges">
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+        <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository">
+      </a>
       <a href="https://www.python.org/" target="_blank" rel="noopener">
         <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
       </a>
@@ -345,6 +372,12 @@
       </a>
       <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-4CAF50?style=for-the-badge" alt="Platform">
     </div>
+
+    <p class="repo-cta">
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+        مشاهده مخزن پروژه در GitHub
+      </a>
+    </p>
   </header>
 
   <hr>
@@ -361,7 +394,8 @@
       <a href="#sample-dataset">دیتاست نمونه</a><span class="sep">•</span>
       <a href="#output-example">نمونه خروجی</a><span class="sep">•</span>
       <a href="#functions-reference">توابع</a><span class="sep">•</span>
-      <a href="#how-it-works">نحوه کار</a>
+      <a href="#how-it-works">نحوه کار</a><span class="sep">•</span>
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">مخزن پروژه</a>
     </div>
   </nav>
 
@@ -820,6 +854,12 @@ openpyxl&gt;=3.0</code></pre>
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
+    <p>
+      <strong>مخزن پروژه:</strong>
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+        https://github.com/kiarashsardari/LYM
+      </a>
+    </p>
     <p>
       <strong>ساخته‌شده با پایتون — با وابستگی خارجی به <code>pandas</code>، <code>numpy</code> و <code>openpyxl</code> (تعریف‌شده در <code>requirements.txt</code>)</strong>
     </p>
