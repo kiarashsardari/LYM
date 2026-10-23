@@ -4,468 +4,806 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LYM — تحلیل‌گر استراتژی معاملاتی</title>
+<meta name="description" content="ابزار سبک پایتونی برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
   :root{
-    --bg:#ffffff;
-    --bg-alt:#f6f8fa;
-    --bg-code:#f6f8fa;
-    --border:#d0d7de;
-    --border-soft:#e5e9ee;
-    --text:#1f2328;
-    --text-soft:#59636e;
-    --accent:#0969da;
-    --accent-soft:#ddf4ff;
+    --bg:#080b10;
+    --surface:#0f151d;
+    --surface-2:#141c26;
+    --border:#1f2937;
+    --border-soft:#172029;
+    --text:#e6edf3;
+    --muted:#8b97a6;
+    --muted-2:#6b7787;
+    --accent:#2dd4bf;
+    --accent-2:#38bdf8;
+    --accent-glow:rgba(45,212,191,.14);
+    --code-bg:#0b1118;
+    --radius:14px;
+    --maxw:1180px;
   }
 
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box;margin:0;padding:0;}
 
   html{scroll-behavior:smooth;}
 
   body{
-    margin:0;
-    padding:0;
     background:var(--bg);
     color:var(--text);
     font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif;
     font-size:16px;
-    line-height:1.9;
+    line-height:1.85;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
 
-  .container{
-    max-width:920px;
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(700px 400px at 85% -5%, rgba(45,212,191,.12), transparent 60%),
+      radial-gradient(700px 400px at 10% 0%, rgba(56,189,248,.10), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{
+    max-width:var(--maxw);
     margin:0 auto;
-    padding:40px 28px 80px;
+    padding:0 24px;
+    position:relative;
+    z-index:1;
   }
-
-  /* ---------- Headings ---------- */
-  h1,h2,h3,h4{
-    font-weight:800;
-    line-height:1.5;
-    margin:0;
-  }
-
-  h1{
-    font-size:2.6rem;
-    letter-spacing:-.5px;
-    margin-bottom:.35em;
-  }
-
-  h2{
-    font-size:1.6rem;
-    margin-top:2.6em;
-    margin-bottom:.7em;
-    padding-bottom:.35em;
-    border-bottom:1px solid var(--border);
-  }
-
-  h3{
-    font-size:1.2rem;
-    margin-top:1.8em;
-    margin-bottom:.6em;
-  }
-
-  p{margin:0 0 1em;}
 
   a{color:var(--accent);text-decoration:none;}
-  a:hover{text-decoration:underline;}
-
-  hr{
-    border:0;
-    border-top:1px solid var(--border);
-    margin:2.5em 0;
-  }
-
-  /* ---------- Header ---------- */
-  .hero{
-    text-align:center;
-    padding:20px 0 10px;
-  }
-
-  .hero h1{
-    font-size:2.9rem;
-    font-weight:900;
-    letter-spacing:-1px;
-  }
-
-  .hero .subtitle{
-    font-size:1.35rem;
-    font-weight:700;
-    color:var(--text);
-    margin:.15em 0 .5em;
-  }
-
-  .hero .tagline{
-    font-size:.98rem;
-    color:var(--text-soft);
-    max-width:760px;
-    margin:0 auto .6em;
-    line-height:2;
-  }
-
-  .hero .tagline strong{color:var(--text);}
-
-  .badges{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:8px;
-    margin:22px 0 8px;
-  }
-
-  .badges img{
-    height:28px;
-    display:block;
-  }
-
-  /* ---------- Repo CTA button ---------- */
-  .repo-cta{
-    text-align:center;
-    margin:10px 0 0;
-    font-size:.98rem;
-    font-weight:700;
-  }
-
-  .repo-cta a{
-    display:inline-block;
-    padding:8px 18px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    background:var(--bg-alt);
-    color:var(--accent);
-    transition:background .15s, border-color .15s;
-  }
-
-  .repo-cta a:hover{
-    background:var(--accent-soft);
-    border-color:var(--accent);
-    text-decoration:none;
-  }
-
-  /* ---------- TOC ---------- */
-  .toc{
-    text-align:center;
-    margin:10px 0 6px;
-  }
-
-  .toc h2{
-    font-size:1.35rem;
-    border:0;
-    margin-top:0;
-    margin-bottom:.6em;
-  }
-
-  .toc-links{
-    font-size:.95rem;
-    line-height:2.4;
-    color:var(--text-soft);
-  }
-
-  .toc-links a{
-    font-weight:600;
-    white-space:nowrap;
-  }
-
-  .toc-links .sep{
-    color:var(--border);
-    margin:0 6px;
-  }
-
-  /* ---------- Tables ---------- */
-  .table-wrap{
-    overflow-x:auto;
-    margin:1.2em 0 1.6em;
-    border-radius:8px;
-  }
-
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:.94rem;
-    border:1px solid var(--border);
-    border-radius:8px;
-    overflow:hidden;
-  }
-
-  thead th{
-    background:var(--bg-alt);
-    font-weight:700;
-    text-align:right;
-    padding:10px 14px;
-    border-bottom:1px solid var(--border);
-    white-space:nowrap;
-  }
-
-  tbody td{
-    padding:9px 14px;
-    border-bottom:1px solid var(--border-soft);
-    vertical-align:top;
-  }
-
-  tbody tr:last-child td{border-bottom:0;}
-  tbody tr:nth-child(even){background:#fbfcfd;}
-
-  td.center,th.center{text-align:center;}
 
   code{
     font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
     font-size:.85em;
-    background:var(--bg-code);
-    padding:.18em .42em;
-    border-radius:5px;
+    background:rgba(56,189,248,.09);
+    color:#7dd3fc;
+    padding:.16em .45em;
+    border-radius:6px;
     direction:ltr;
     display:inline-block;
     unicode-bidi:embed;
   }
 
-  /* ---------- Code blocks ---------- */
-  pre{
-    direction:ltr;
-    text-align:left;
-    background:var(--bg-code);
+  /* ============ NAVBAR ============ */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(8,11,16,.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border-soft);
+  }
+
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:66px;
+    gap:20px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:900;
+    font-size:1.25rem;
+    letter-spacing:1px;
+    color:var(--text);
+  }
+
+  .brand .dot{
+    width:11px;height:11px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 0 14px var(--accent);
+  }
+
+  .brand span{background:linear-gradient(135deg,#2dd4bf,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:26px;
+    font-size:.92rem;
+    font-weight:600;
+  }
+
+  .nav-links a{color:var(--muted);transition:color .18s;}
+  .nav-links a:hover{color:var(--text);}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 18px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:.9rem;
     border:1px solid var(--border);
-    border-radius:8px;
-    padding:16px 18px;
-    overflow-x:auto;
-    font-size:.85rem;
-    line-height:1.75;
-    margin:1.1em 0 1.5em;
+    color:var(--text);
+    background:var(--surface);
+    transition:.18s;
+    white-space:nowrap;
+    cursor:pointer;
   }
 
-  pre code{
-    background:none;
-    padding:0;
-    font-size:1rem;
-    display:inline;
-    border-radius:0;
+  .btn:hover{border-color:var(--accent);background:var(--surface-2);color:var(--text);}
+
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#04121a;
+    border:none;
+    box-shadow:0 6px 22px -8px rgba(45,212,191,.7);
   }
 
-  /* ---------- Blockquote / note ---------- */
-  blockquote{
-    margin:1.2em 0;
-    padding:.75em 1.1em;
-    border-right:4px solid var(--accent);
-    background:var(--accent-soft);
-    border-radius:6px;
-    color:#0a3069;
-    font-size:.94rem;
+  .btn-primary:hover{
+    background:linear-gradient(135deg,#3ee0cb,#4cc4fb);
+    color:#04121a;
+    transform:translateY(-1px);
   }
 
-  blockquote p:last-child{margin-bottom:0;}
+  .btn svg{width:17px;height:17px;fill:currentColor;}
 
-  /* ---------- Details ---------- */
-  details{
+  .menu-toggle{
+    display:none;
+    background:none;border:none;color:var(--text);
+    font-size:1.5rem;cursor:pointer;
+  }
+
+  /* ============ HERO ============ */
+  .hero{
+    padding:88px 0 70px;
+    text-align:center;
+    position:relative;
+  }
+
+  .hero .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 16px;
+    border-radius:999px;
+    border:1px solid rgba(45,212,191,.32);
+    background:rgba(45,212,191,.07);
+    color:var(--accent);
+    font-size:.83rem;
+    font-weight:700;
+    margin-bottom:26px;
+  }
+
+  .hero .pill::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 10px var(--accent);
+    animation:pulse 2s infinite;
+  }
+
+  @keyframes pulse{50%{opacity:.3;}}
+
+  .hero h1{
+    font-size:clamp(2.6rem,7vw,4.6rem);
+    font-weight:900;
+    letter-spacing:-1.5px;
+    line-height:1.1;
+    margin-bottom:18px;
+    background:linear-gradient(135deg,#fff 20%,#2dd4bf 60%,#38bdf8 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .hero .sub{
+    font-size:clamp(1.05rem,2.4vw,1.35rem);
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:20px;
+  }
+
+  .hero .desc{
+    max-width:730px;
+    margin:0 auto 34px;
+    color:var(--muted);
+    font-size:1.02rem;
+    line-height:2.1;
+  }
+
+  .hero .desc strong{color:#c9d4e0;font-weight:700;}
+
+  .hero-actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    margin-bottom:38px;
+  }
+
+  .badges{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:9px;
+  }
+
+  .badges img{height:28px;display:block;border-radius:6px;}
+
+  /* ============ SECTION ============ */
+  section{padding:70px 0;}
+
+  .sec-head{
+    margin-bottom:44px;
+    text-align:center;
+  }
+
+  .sec-head .kicker{
+    display:inline-block;
+    font-size:.8rem;
+    font-weight:800;
+    letter-spacing:2px;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin-bottom:12px;
+  }
+
+  .sec-head h2{
+    font-size:clamp(1.6rem,4vw,2.3rem);
+    font-weight:900;
+    letter-spacing:-.6px;
+    margin-bottom:12px;
+  }
+
+  .sec-head p{
+    color:var(--muted);
+    max-width:620px;
+    margin:0 auto;
+    font-size:.98rem;
+  }
+
+  /* ============ FEATURES ============ */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(275px,1fr));
+    gap:18px;
+  }
+
+  .card{
+    background:linear-gradient(160deg,var(--surface),var(--surface-2));
     border:1px solid var(--border);
-    border-radius:8px;
-    margin:1em 0;
-    background:#fff;
+    border-radius:var(--radius);
+    padding:24px;
+    transition:.22s;
+    position:relative;
     overflow:hidden;
   }
 
-  details > summary{
-    cursor:pointer;
+  .card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(320px 130px at 100% 0%, var(--accent-glow), transparent 70%);
+    opacity:0;
+    transition:opacity .25s;
+    pointer-events:none;
+  }
+
+  .card:hover{
+    border-color:rgba(45,212,191,.42);
+    transform:translateY(-4px);
+  }
+
+  .card:hover::after{opacity:1;}
+
+  .card .ico{
+    width:42px;height:42px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:11px;
+    background:rgba(45,212,191,.1);
+    border:1px solid rgba(45,212,191,.24);
+    font-size:1.15rem;
+    margin-bottom:16px;
+  }
+
+  .card h3{
+    font-size:1.03rem;
+    font-weight:800;
+    margin-bottom:8px;
+    color:#fff;
+  }
+
+  .card p{
+    font-size:.9rem;
+    color:var(--muted);
+    line-height:1.95;
+  }
+
+  /* ============ CODE BLOCK ============ */
+  .code-box{
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 20px 50px -30px rgba(0,0,0,.9);
+  }
+
+  .code-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
     padding:12px 16px;
-    background:var(--bg-alt);
-    font-weight:700;
-    font-size:.98rem;
-    list-style:none;
-    user-select:none;
-    transition:background .15s;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--border);
   }
 
-  details > summary::-webkit-details-marker{display:none;}
-
-  details > summary::before{
-    content:"▸";
-    display:inline-block;
-    margin-left:8px;
-    color:var(--text-soft);
-    transition:transform .15s;
-    font-size:.85em;
+  .code-bar .d{width:11px;height:11px;border-radius:50%;}
+  .code-bar .d1{background:#ff5f57;}
+  .code-bar .d2{background:#febc2e;}
+  .code-bar .d3{background:#28c840;}
+  .code-bar .fn{
+    margin-inline-start:auto;
+    font-family:monospace;
+    font-size:.78rem;
+    color:var(--muted-2);
+    direction:ltr;
   }
 
-  details[open] > summary::before{transform:rotate(90deg);}
-
-  details > summary:hover{background:#eef1f4;}
-
-  details .details-body{
-    padding:14px 18px 6px;
+  .code-box pre{
+    padding:22px 20px;
+    overflow-x:auto;
+    direction:ltr;
+    text-align:left;
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:.87rem;
+    line-height:1.8;
+    color:#c9d4e0;
+    margin:0;
   }
 
-  /* ---------- Steps list ---------- */
-  .steps{
+  .code-box pre::-webkit-scrollbar{height:8px;}
+  .code-box pre::-webkit-scrollbar-thumb{background:#25313f;border-radius:4px;}
+
+  /* ============ INSTALL ============ */
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+
+  .step-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px;
+  }
+
+  .step-card .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;height:32px;
+    border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#04121a;
+    font-weight:900;
+    font-size:.9rem;
+    margin-bottom:14px;
+  }
+
+  .step-card h3{font-size:1.05rem;font-weight:800;margin-bottom:14px;}
+
+  .step-card p{color:var(--muted);font-size:.92rem;margin-bottom:12px;}
+
+  .flow-steps{
     display:flex;
     flex-wrap:wrap;
     align-items:center;
     justify-content:center;
     gap:10px;
-    background:var(--bg-alt);
+    background:var(--surface);
     border:1px solid var(--border);
-    border-radius:8px;
-    padding:16px 18px;
-    margin:1.2em 0;
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:20px;
+  }
+
+  .flow-steps .st{
+    padding:7px 14px;
+    border-radius:9px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    font-size:.85rem;
     font-weight:600;
-    font-size:.95rem;
+    color:#c9d4e0;
   }
 
-  .steps .arrow{color:var(--text-soft);font-weight:400;}
+  .flow-steps .ar{color:var(--accent);font-weight:900;}
 
-  /* ---------- Centered helper ---------- */
-  .center-block{
-    text-align:center;
-    font-weight:700;
-    margin:1.4em 0 .6em;
-  }
-
-  /* ---------- Footer ---------- */
-  .footer{
-    text-align:center;
-    color:var(--text-soft);
+  .note{
+    border-radius:12px;
+    padding:14px 20px;
     font-size:.9rem;
-    padding-top:2em;
-    line-height:2;
+    margin:16px 0;
+    border-inline-start:4px solid var(--accent);
+    background:rgba(45,212,191,.07);
+    color:#b7f5ec;
   }
 
-  .footer strong{color:var(--text);}
+  .note strong{color:#e6fffb;}
 
-  /* ---------- Responsive ---------- */
-  @media (max-width:640px){
-    .container{padding:28px 16px 60px;}
-    h1,.hero h1{font-size:2rem;}
-    .hero .subtitle{font-size:1.1rem;}
-    h2{font-size:1.3rem;}
-    .badges img{height:24px;}
-    pre{font-size:.78rem;}
-    table{font-size:.86rem;}
+  .note.warn{
+    border-inline-start-color:#fbbf24;
+    background:rgba(251,191,36,.07);
+    color:#fde68a;
+  }
+
+  .note.warn strong{color:#fff8e1;}
+
+  /* ============ TABLE ============ */
+  .table-wrap{
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:var(--surface);
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.92rem;
+  }
+
+  thead th{
+    background:var(--surface-2);
+    text-align:right;
+    padding:14px 18px;
+    font-weight:800;
+    color:#fff;
+    font-size:.88rem;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+
+  tbody td{
+    padding:13px 18px;
+    border-bottom:1px solid var(--border-soft);
+    color:var(--muted);
+    vertical-align:top;
+  }
+
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr:hover{background:rgba(45,212,191,.03);}
+  tbody td strong{color:#dfe8f2;}
+
+  .center{text-align:center;}
+
+  /* ============ OUTPUT TERMINAL ============ */
+  .terminal{
+    background:#04070a;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 30px 60px -35px rgba(0,0,0,.95);
+  }
+
+  .terminal .tbar{
+    display:flex;align-items:center;gap:8px;
+    padding:12px 16px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--border);
+  }
+
+  .terminal .tbar .d{width:11px;height:11px;border-radius:50%;}
+  .terminal .tbar .d1{background:#ff5f57;}
+  .terminal .tbar .d2{background:#febc2e;}
+  .terminal .tbar .d3{background:#28c840;}
+  .terminal .tbar .t{
+    margin-inline-start:auto;
+    font-family:monospace;
+    font-size:.78rem;
+    color:var(--muted-2);
+    direction:ltr;
+  }
+
+  .terminal pre{
+    margin:0;
+    padding:22px 20px;
+    direction:ltr;
+    text-align:left;
+    overflow-x:auto;
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:.82rem;
+    line-height:1.85;
+    color:#a9e6d6;
+  }
+
+  /* ============ ACCORDION ============ */
+  .acc{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  details.item{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:border-color .2s;
+  }
+
+  details.item[open]{border-color:rgba(45,212,191,.4);}
+
+  details.item summary{
+    cursor:pointer;
+    padding:18px 22px;
+    font-weight:800;
+    font-size:.98rem;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#fff;
+    user-select:none;
+    transition:background .18s;
+  }
+
+  details.item summary::-webkit-details-marker{display:none;}
+
+  details.item summary:hover{background:rgba(45,212,191,.04);}
+
+  details.item summary .chev{
+    margin-inline-start:auto;
+    color:var(--accent);
+    font-size:.85rem;
+    transition:transform .22s;
+  }
+
+  details.item[open] summary .chev{transform:rotate(90deg);}
+
+  details.item summary .tag{
+    font-size:.72rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:999px;
+    background:rgba(56,189,248,.12);
+    color:#7dd3fc;
+    font-family:monospace;
+    direction:ltr;
+  }
+
+  details.item .body{padding:0 14px 16px;}
+
+  /* ============ FORMULA CARDS ============ */
+  .formula-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+    gap:18px;
+  }
+
+  .formula{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px;
+  }
+
+  .formula h4{font-size:.95rem;font-weight:800;margin-bottom:12px;color:#fff;}
+
+  .formula .eq{
+    direction:ltr;
+    text-align:left;
+    font-family:monospace;
+    font-size:.85rem;
+    color:#7dd3fc;
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px 14px;
+    line-height:1.8;
+    overflow-x:auto;
+  }
+
+  .pill-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-top:14px;
+  }
+
+  .pill-list span{
+    padding:5px 13px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    font-size:.83rem;
+    color:#c9d4e0;
+  }
+
+  .pill-list span b{color:var(--accent);}
+
+  /* ============ FOOTER ============ */
+  footer{
+    border-top:1px solid var(--border-soft);
+    padding:52px 0 40px;
+    text-align:center;
+    position:relative;
+    z-index:1;
+  }
+
+  footer .fbrand{
+    font-size:1.5rem;
+    font-weight:900;
+    letter-spacing:1px;
+    margin-bottom:14px;
+    background:linear-gradient(135deg,#2dd4bf,#38bdf8);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  footer p{
+    color:var(--muted-2);
+    font-size:.88rem;
+    margin-bottom:10px;
+  }
+
+  footer a{font-weight:700;}
+
+  footer .fdot{
+    display:inline-block;
+    margin:0 8px;
+    color:var(--border);
+  }
+
+  /* ============ MOBILE ============ */
+  @media(max-width:860px){
+    .nav-links{display:none;}
+    .menu-toggle{display:block;}
+    .nav-inner .btn-primary{display:none;}
+    .two-col{grid-template-columns:1fr;}
+    section{padding:54px 0;}
+    .hero{padding:60px 0 40px;}
   }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- ============ HERO ============ -->
-  <header class="hero">
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="brand"><span class="dot"></span><span>LYM</span></a>
+    <nav class="nav-links">
+      <a href="#features">ویژگی‌ها</a>
+      <a href="#structure">ساختار</a>
+      <a href="#install">نصب</a>
+      <a href="#quickstart">شروع سریع</a>
+      <a href="#output">خروجی</a>
+      <a href="#functions">توابع</a>
+      <a href="#how">نحوه کار</a>
+    </nav>
+    <a class="btn btn-primary" href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <button class="menu-toggle" aria-label="منو">☰</button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="pill">ابزار تحلیل استراتژی معاملاتی</div>
     <h1>LYM</h1>
-    <div class="subtitle">تحلیل‌گر استراتژی معاملاتی</div>
-    <p class="tagline">
-      <strong>یک ابزار سبک و کم‌وابستگی پایتونی برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل</strong><br>
-      <strong>یک گزارش خوانا و مرتب شامل نرخ برد، توزیع پاداش‌ها، سطوح بهینه‌ی حد سود و رکورد برد/باخت‌های متوالی — همه از طریق خط فرمان</strong>
+    <div class="sub">تحلیل‌گر استراتژی معاملاتی</div>
+    <p class="desc">
+      <strong>یک ابزار سبک و کم‌وابستگی پایتونی</strong> برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل.<br>
+      گزارش خوانا و مرتب شامل <strong>نرخ برد</strong>، <strong>توزیع پاداش‌ها</strong>، <strong>سطوح بهینه‌ی حد سود</strong> و <strong>رکورد برد/باخت‌های متوالی</strong> — همه از طریق خط فرمان.
     </p>
+
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        مشاهده مخزن پروژه
+      </a>
+      <a class="btn" href="#quickstart">شروع سریع</a>
+    </div>
 
     <div class="badges">
-      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository">
-      </a>
-      <a href="https://www.python.org/" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-      </a>
-      <a href="https://pandas.pydata.org/" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" alt="pandas">
-      </a>
-      <a href="https://numpy.org/" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white" alt="numpy">
-      </a>
-      <a href="https://openpyxl.readthedocs.io/" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/badge/openpyxl-3.0%2B-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white" alt="openpyxl">
-      </a>
+      <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+      <img src="https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white" alt="pandas">
+      <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white" alt="numpy">
+      <img src="https://img.shields.io/badge/openpyxl-3.0%2B-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white" alt="openpyxl">
       <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-4CAF50?style=for-the-badge" alt="Platform">
     </div>
+  </div>
+</section>
 
-    <p class="repo-cta">
-      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
-        مشاهده مخزن پروژه در GitHub
-      </a>
-    </p>
-  </header>
-
-  <hr>
-
-  <!-- ============ TOC ============ -->
-  <nav class="toc" aria-label="فهرست مطالب">
-    <h2>فهرست مطالب</h2>
-    <div class="toc-links">
-      <a href="#features">ویژگی‌ها</a><span class="sep">•</span>
-      <a href="#project-structure">ساختار پروژه</a><span class="sep">•</span>
-      <a href="#installation">نصب</a><span class="sep">•</span>
-      <a href="#quick-start">شروع سریع</a>
-      <br>
-      <a href="#sample-dataset">دیتاست نمونه</a><span class="sep">•</span>
-      <a href="#output-example">نمونه خروجی</a><span class="sep">•</span>
-      <a href="#functions-reference">توابع</a><span class="sep">•</span>
-      <a href="#how-it-works">نحوه کار</a><span class="sep">•</span>
-      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">مخزن پروژه</a>
+<!-- ============ FEATURES ============ -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">قابلیت‌ها</span>
+      <h2>ویژگی‌ها</h2>
+      <p>هر آنچه برای تحلیل یک استراتژی معاملاتی نیاز دارید، در یک ابزار سبک و ساده.</p>
     </div>
-  </nav>
 
-  <hr>
-
-  <!-- ============ FEATURES ============ -->
-  <section id="features">
-    <h2>ویژگی‌ها</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:28%">ویژگی</th>
-            <th>توضیح</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>نرمال‌سازی داده</strong></td>
-            <td>به‌صورت خودکار مقادیر رشته‌ای را به حروف بزرگ و نام ستون‌ها را به حروف کوچک تبدیل می‌کند</td>
-          </tr>
-          <tr>
-            <td><strong>شمارش استراتژی‌ها</strong></td>
-            <td>تعداد کل معاملات هر استراتژی را می‌شمارد</td>
-          </tr>
-          <tr>
-            <td><strong>محاسبه پاداش</strong></td>
-            <td>پاداش هر پوزیشن را با فرمول <code>تعداد × اندیس</code> محاسبه می‌کند (SL = اندیس ۱، TPn = اندیس n)</td>
-          </tr>
-          <tr>
-            <td><strong>تشخیص TP بهینه</strong></td>
-            <td>سطح حد سودی را پیدا می‌کند که بیشترین پاداش کل را دارد</td>
-          </tr>
-          <tr>
-            <td><strong>نرخ برد بر اساس TP1</strong></td>
-            <td>نرخ برد هر استراتژی را با در نظر گرفتن TP1 محاسبه می‌کند</td>
-          </tr>
-          <tr>
-            <td><strong>نرخ برد بر اساس TP بهینه</strong></td>
-            <td>نرخ برد را بر اساس بهترین سطح حد سود محاسبه می‌کند</td>
-          </tr>
-          <tr>
-            <td><strong>برد/باخت‌های متوالی</strong></td>
-            <td>طولانی‌ترین رکورد TP متوالی و SL متوالی را پیدا می‌کند</td>
-          </tr>
-          <tr>
-            <td><strong>پشتیبانی از اکسل و CSV</strong></td>
-            <td>فایل‌های <code>.xlsx</code> را مستقیم می‌خواند؛ در صورت نبود فایل، از دیتاست نمونه استفاده می‌کند</td>
-          </tr>
-          <tr>
-            <td><strong>ذخیره خودکار آدرس</strong></td>
-            <td>مسیر آخرین فایل اکسل را برای تحلیل سریع بعدی به خاطر می‌سپارد</td>
-          </tr>
-          <tr>
-            <td><strong>خروجی گزارش</strong></td>
-            <td>کل تحلیل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="grid">
+      <div class="card">
+        <div class="ico">🧹</div>
+        <h3>نرمال‌سازی داده</h3>
+        <p>به‌صورت خودکار مقادیر رشته‌ای را به حروف بزرگ و نام ستون‌ها را به حروف کوچک تبدیل می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔢</div>
+        <h3>شمارش استراتژی‌ها</h3>
+        <p>تعداد کل معاملات هر استراتژی را می‌شمارد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">💰</div>
+        <h3>محاسبه پاداش</h3>
+        <p>پاداش هر پوزیشن را با فرمول <code>تعداد × اندیس</code> محاسبه می‌کند (SL = اندیس ۱، TPn = اندیس n).</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎯</div>
+        <h3>تشخیص TP بهینه</h3>
+        <p>سطح حد سودی را پیدا می‌کند که بیشترین پاداش کل را دارد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📊</div>
+        <h3>نرخ برد بر اساس TP1</h3>
+        <p>نرخ برد هر استراتژی را با در نظر گرفتن TP1 محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📈</div>
+        <h3>نرخ برد بر اساس TP بهینه</h3>
+        <p>نرخ برد را بر اساس بهترین سطح حد سود محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔥</div>
+        <h3>برد/باخت‌های متوالی</h3>
+        <p>طولانی‌ترین رکورد TP متوالی و SL متوالی را پیدا می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📁</div>
+        <h3>پشتیبانی از اکسل و CSV</h3>
+        <p>فایل‌های <code>.xlsx</code> را مستقیم می‌خواند؛ در صورت نبود فایل، از دیتاست نمونه استفاده می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">💾</div>
+        <h3>ذخیره خودکار آدرس</h3>
+        <p>مسیر آخرین فایل اکسل را برای تحلیل سریع بعدی به خاطر می‌سپارد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📝</div>
+        <h3>خروجی گزارش</h3>
+        <p>کل تحلیل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند.</p>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr>
+<!-- ============ STRUCTURE ============ -->
+<section id="structure">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">سازمان‌دهی</span>
+      <h2>ساختار پروژه</h2>
+    </div>
 
-  <!-- ============ PROJECT STRUCTURE ============ -->
-  <section id="project-structure">
-    <h2>ساختار پروژه</h2>
-
-<pre><code>LYM/
+    <div class="code-box">
+      <div class="code-bar">
+        <span class="d d1"></span><span class="d d2"></span><span class="d d3"></span>
+        <span class="fn">LYM/</span>
+      </div>
+      <pre>LYM/
 │
 ├── run.py                →  نقطه ورود اصلی — مدیریت ورودی، تحلیل و خروجی
 ├── analyzer.py           →  توابع اصلی تحلیل (نرخ برد، پاداش‌ها، رکوردها و ...)
@@ -476,119 +814,131 @@
 ├── my_dataset.csv        →  خودکار ساخته می‌شود — دیتاست نمونه
 ├── your_dataset.csv      →  موقت — تبدیل‌شده از فایل اکسل ورودی
 ├── Analyze_For_You.txt   →  خروجی — گزارش کامل تحلیل
-└── README.md             →  همین فایل</code></pre>
-  </section>
+└── README.md             →  همین فایل</pre>
+    </div>
+  </div>
+</section>
 
-  <hr>
-
-  <!-- ============ INSTALLATION ============ -->
-  <section id="installation">
-    <h2>نصب</h2>
-
-    <blockquote>
-      <p><strong>پیش‌نیاز:</strong> پایتون نسخه <strong>۳.۸</strong> یا بالاتر</p>
-    </blockquote>
-
-    <h3>روش ۱ — دانلود ZIP (بدون نیاز به Git)</h3>
-
-    <div class="steps">
-      <span>۱. روی دکمه‌ی سبز <code>&lt;&gt; Code</code> کلیک کنید</span>
-      <span class="arrow">→</span>
-      <span>۲. گزینه‌ی <code>Download ZIP</code> را بزنید</span>
-      <span class="arrow">→</span>
-      <span>۳. فایل را از حالت فشرده خارج کنید</span>
+<!-- ============ INSTALL ============ -->
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">راه‌اندازی</span>
+      <h2>نصب</h2>
+      <p>پیش‌نیاز: پایتون نسخه <strong style="color:#fff">۳.۸</strong> یا بالاتر</p>
     </div>
 
-    <h3>روش ۲ — کلون با Git</h3>
+    <div class="flow-steps">
+      <span class="st">۱. دکمه <code>&lt;&gt; Code</code></span>
+      <span class="ar">→</span>
+      <span class="st">۲. <code>Download ZIP</code></span>
+      <span class="ar">→</span>
+      <span class="st">۳. استخراج فایل</span>
+    </div>
 
-<pre><code>git clone https://github.com/kiarashsardari/LYM.git
-cd LYM</code></pre>
+    <div class="two-col">
+      <div class="step-card">
+        <span class="num">۱</span>
+        <h3>روش ۱ — دانلود ZIP</h3>
+        <p>بدون نیاز به Git. از صفحه‌ی گیت‌هاب پروژه، فایل را به صورت ZIP دانلود و خارج کنید.</p>
+        <a class="btn" href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">دانلود از GitHub</a>
+      </div>
 
-    <h3>نصب پکیج‌های موردنیاز</h3>
+      <div class="step-card">
+        <span class="num">۲</span>
+        <h3>روش ۲ — کلون با Git</h3>
+        <p>اگر Git دارید، مخزن را کلون کنید:</p>
+        <div class="code-box" style="margin-top:8px">
+          <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+          <pre>git clone https://github.com/kiarashsardari/LYM.git
+cd LYM</pre>
+        </div>
+      </div>
+    </div>
 
-    <p>تمام پیش‌نیازها در فایل <code>requirements.txt</code> تعریف شده‌اند. برای نصب یک‌جا، در ریشهٔ پروژه اجرا کنید:</p>
+    <div style="margin-top:26px" class="step-card">
+      <h3>نصب پکیج‌های موردنیاز</h3>
+      <p>تمام پیش‌نیازها در فایل <code>requirements.txt</code> تعریف شده‌اند. برای نصب یک‌جا، در ریشهٔ پروژه اجرا کنید:</p>
 
-<pre><code>pip install -r requirements.txt</code></pre>
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">requirements.txt</span></div>
+        <pre>pip install -r requirements.txt</pre>
+      </div>
 
-    <p>محتوای <code>requirements.txt</code>:</p>
+      <p style="margin-top:18px">محتوای <code>requirements.txt</code>:</p>
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">requirements.txt</span></div>
+        <pre># Python >= 3.8
+pandas>=1.3
+numpy>=1.20
+openpyxl>=3.0</pre>
+      </div>
 
-<pre><code># Python &gt;= 3.8
-pandas&gt;=1.3
-numpy&gt;=1.20
-openpyxl&gt;=3.0</code></pre>
+      <div class="note" style="margin-top:18px">
+        <strong>نکته:</strong> پکیج <code>openpyxl</code> برای خواندن فایل‌های <code>.xlsx</code> ضروری است.
+      </div>
 
-    <blockquote>
-      <p><strong>نکته:</strong> پکیج <code>openpyxl</code> برای خواندن فایل‌های <code>.xlsx</code> ضروری است.</p>
-    </blockquote>
+      <div class="note warn">
+        💡 در صورت نیاز می‌توانید ابتدا <code>pip</code> را به‌روزرسانی کنید:
+        <div class="code-box" style="margin-top:10px">
+          <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+          <pre>python -m pip install --upgrade pip</pre>
+        </div>
+      </div>
 
-    <blockquote>
-      <p>💡 در صورت نیاز می‌توانید ابتدا <code>pip</code> را به‌روزرسانی کنید:</p>
-<pre><code>python -m pip install --upgrade pip</code></pre>
-    </blockquote>
+      <p style="margin-top:6px">اگر نمی‌خواهید از <code>requirements.txt</code> استفاده کنید، نصب دستی هم کافی است:</p>
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+        <pre>pip install pandas numpy openpyxl</pre>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <p>اگر نمی‌خواهید از <code>requirements.txt</code> استفاده کنید، نصب دستی هم کافی است:</p>
+<!-- ============ QUICKSTART ============ -->
+<section id="quickstart">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">اجرا</span>
+      <h2>شروع سریع</h2>
+      <p>فقط یک دستور تا اجرا</p>
+    </div>
 
-<pre><code>pip install pandas numpy openpyxl</code></pre>
-  </section>
+    <div class="code-box" style="margin-bottom:30px">
+      <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+      <pre>python run.py</pre>
+    </div>
 
-  <hr>
+    <h3 style="font-size:1.15rem;font-weight:800;margin-bottom:18px;text-align:center">برنامه به ترتیب این کارها را انجام می‌دهد:</h3>
 
-  <!-- ============ QUICK START ============ -->
-  <section id="quick-start">
-    <h2>شروع سریع</h2>
-
-    <h3>فقط یک دستور تا اجرا</h3>
-
-<pre><code>python run.py</code></pre>
-
-    <div class="center-block">برنامه به ترتیب این کارها را انجام می‌دهد:</div>
-
-    <div class="table-wrap">
+    <div class="table-wrap" style="margin-bottom:36px">
       <table>
         <thead>
           <tr>
-            <th class="center" style="width:70px">مرحله</th>
+            <th class="center" style="width:90px">مرحله</th>
             <th>عملیات</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="center"><strong>۱</strong></td>
-            <td>مسیر فایل اکسل را می‌پرسد (یا از مسیر ذخیره‌شده قبلی استفاده می‌کند).</td>
-          </tr>
-          <tr>
-            <td class="center"><strong>۲</strong></td>
-            <td>اگر فایل پیدا نشد، پیشنهاد می‌دهد از دیتاست نمونه استفاده شود.</td>
-          </tr>
-          <tr>
-            <td class="center"><strong>۳</strong></td>
-            <td>داده‌ها را نرمال‌سازی کرده و تحلیل‌ها را اجرا می‌کند.</td>
-          </tr>
-          <tr>
-            <td class="center"><strong>۴</strong></td>
-            <td>نتایج را مرحله‌به‌مرحله نمایش می‌دهد (بین هر بخش <code>Enter</code> بزنید).</td>
-          </tr>
-          <tr>
-            <td class="center"><strong>۵</strong></td>
-            <td>گزارش کامل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند.</td>
-          </tr>
+          <tr><td class="center"><strong>۱</strong></td><td>مسیر فایل اکسل را می‌پرسد (یا از مسیر ذخیره‌شده قبلی استفاده می‌کند).</td></tr>
+          <tr><td class="center"><strong>۲</strong></td><td>اگر فایل پیدا نشد، پیشنهاد می‌دهد از دیتاست نمونه استفاده شود.</td></tr>
+          <tr><td class="center"><strong>۳</strong></td><td>داده‌ها را نرمال‌سازی کرده و تحلیل‌ها را اجرا می‌کند.</td></tr>
+          <tr><td class="center"><strong>۴</strong></td><td>نتایج را مرحله‌به‌مرحله نمایش می‌دهد (بین هر بخش <code>Enter</code> بزنید).</td></tr>
+          <tr><td class="center"><strong>۵</strong></td><td>گزارش کامل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>فرمت فایل ورودی</h3>
-
-    <blockquote>
-      <p>فایل اکسل شما باید <strong>حداقل این سه ستون</strong> را داشته باشد</p>
-    </blockquote>
+    <h3 style="font-size:1.15rem;font-weight:800;margin-bottom:16px;text-align:center">فرمت فایل ورودی</h3>
+    <p style="text-align:center;color:var(--muted);margin-bottom:18px;font-size:.93rem">فایل اکسل شما باید <strong style="color:#fff">حداقل این سه ستون</strong> را داشته باشد.</p>
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th class="center" style="width:120px">ستون</th>
+            <th class="center" style="width:150px">ستون</th>
             <th>توضیح</th>
-            <th style="width:220px">مقادیر نمونه</th>
+            <th style="width:280px">مقادیر نمونه</th>
           </tr>
         </thead>
         <tbody>
@@ -610,34 +960,59 @@ openpyxl&gt;=3.0</code></pre>
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr>
+<!-- ============ SAMPLE DATASET ============ -->
+<section id="sample">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">تست</span>
+      <h2>دیتاست نمونه</h2>
+    </div>
 
-  <!-- ============ SAMPLE DATASET ============ -->
-  <section id="sample-dataset">
-    <h2>دیتاست نمونه</h2>
+    <div class="note" style="margin-bottom:24px">
+      <strong>نکته:</strong> اگر فایل اکسل ارائه نشود، برنامه از طریق <code>dataset_maker.py</code> یک دیتاست نمونه می‌سازد.
+    </div>
 
-    <blockquote>
-      <p><strong>نکته:</strong> اگر فایل اکسل ارائه نشود، برنامه از طریق <code>dataset_maker.py</code> یک دیتاست نمونه می‌سازد.</p>
-    </blockquote>
+    <div class="grid">
+      <div class="card">
+        <div class="ico">📅</div>
+        <h3>۳۶۵ روز معامله</h3>
+        <p>یک معامله در روز برای یک سال کامل به‌صورت مصنوعی تولید می‌شود.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎲</div>
+        <h3>پوزیشن‌های تصادفی</h3>
+        <p>با احتمالات وزن‌دار انتخاب می‌شوند؛ مثلاً <code>SL</code> با ۳۰٪، <code>TP1</code> با ۱۰٪، <code>TP3</code> با ۳۰٪ و ...</p>
+      </div>
+      <div class="card">
+        <div class="ico">🏷️</div>
+        <h3>استراتژی‌های متنوع</h3>
+        <p>به‌صورت تصادفی از <code>A</code> تا <code>H</code> انتخاب می‌شوند تا تحلیل واقعی‌تر باشد.</p>
+      </div>
+    </div>
 
-    <ul>
-      <li><strong>۳۶۵ روز</strong> معامله‌ی مصنوعی (یک معامله در روز برای یک سال کامل).</li>
-      <li><strong>پوزیشن‌ها</strong> به‌صورت تصادفی با احتمالات وزن‌دار انتخاب می‌شوند (مثلاً <code>SL</code> با ۳۰٪، <code>TP1</code> با ۱۰٪، <code>TP3</code> با ۳۰٪ و ...).</li>
-      <li><strong>استراتژی‌ها</strong> به‌صورت تصادفی از <code>A</code> تا <code>H</code> انتخاب می‌شوند.</li>
-    </ul>
+    <p style="text-align:center;color:var(--muted);margin-top:28px">
+      این امکان به شما اجازه می‌دهد <strong style="color:#fff">بدون هیچ داده‌ی خارجی، کل فرایند را تست کنید.</strong>
+    </p>
+  </div>
+</section>
 
-    <p>این امکان به شما اجازه می‌دهد <strong>بدون هیچ داده‌ی خارجی، کل فرایند را تست کنید.</strong></p>
-  </section>
+<!-- ============ OUTPUT ============ -->
+<section id="output">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">نمایش</span>
+      <h2>نمونه خروجی</h2>
+    </div>
 
-  <hr>
-
-  <!-- ============ OUTPUT EXAMPLE ============ -->
-  <section id="output-example">
-    <h2>نمونه خروجی</h2>
-
-<pre><code>═════════════════════════════════════════════════
+    <div class="terminal">
+      <div class="tbar">
+        <span class="d d1"></span><span class="d d2"></span><span class="d d3"></span>
+        <span class="t">Analyze_For_You.txt</span>
+      </div>
+      <pre>═════════════════════════════════════════════════
    Total trades per strategy
 ═════════════════════════════════════════════════
 
@@ -681,101 +1056,109 @@ openpyxl&gt;=3.0</code></pre>
    Max consecutive losses  →   3
 ═════════════════════════════════════════════════
 
-              Good luck!</code></pre>
-  </section>
+              Good luck!</pre>
+    </div>
+  </div>
+</section>
 
-  <hr>
+<!-- ============ FUNCTIONS ============ -->
+<section id="functions">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">API</span>
+      <h2>توابع</h2>
+      <p>مرجع کامل توابع موجود در فایل‌های پروژه.</p>
+    </div>
 
-  <!-- ============ FUNCTIONS REFERENCE ============ -->
-  <section id="functions-reference">
-    <h2>توابع</h2>
+    <div class="acc">
 
-    <details>
-      <summary><strong>analyzer.py — برای مشاهده کلیک کنید</strong></summary>
-      <div class="details-body">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:42%">تابع</th>
-                <th>توضیح</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><code>sdf(df)</code></td><td>نرمال‌سازی دیتافریم: مقادیر رشته‌ای را بزرگ و نام ستون‌ها را کوچک می‌کند</td></tr>
-              <tr><td><code>count_strategies(df)</code></td><td>یک Series شامل تعداد معاملات هر استراتژی برمی‌گرداند</td></tr>
-              <tr><td><code>analyze_win_rate_by_tp1(df)</code></td><td>لیستی از دیکشنری‌ها با نرخ برد هر استراتژی بر اساس TP1 برمی‌گرداند</td></tr>
-              <tr><td><code>sort_key(p_r)</code></td><td>کلید مرتب‌سازی: <code>SL</code> → ۰ و <code>TPn</code> → n</td></tr>
-              <tr><td><code>positions_count(df)</code></td><td>یک Series شامل تعداد وقوع هر پوزیشن برمی‌گرداند</td></tr>
-              <tr><td><code>tp_rewards(df)</code></td><td>برای هر پوزیشن <code>تعداد × اندیس</code> را محاسبه و بر اساس اندیس مرتب می‌کند</td></tr>
-              <tr><td><code>optimized_tp(df)</code></td><td>TP (یا TPهای) با بیشترین پاداش را برمی‌گرداند</td></tr>
-              <tr><td><code>find_andis(position)</code></td><td>اندیس عددی را از رشته پوزیشن استخراج می‌کند (SL → ۱)</td></tr>
-              <tr><td><code>count_best_tps(df)</code></td><td>تعداد برخوردهای TP در سطح بهینه و بالاتر را می‌شمارد</td></tr>
-              <tr><td><code>analyze_win_rate_by_best_tp(df)</code></td><td>نرخ برد به ازای هر TP بهینه را برمی‌گرداند</td></tr>
-              <tr><td><code>positions_list(df)</code></td><td>ستون <code>position</code> را به‌صورت لیست برمی‌گرداند</td></tr>
-              <tr><td><code>consecutive_wins(df)</code></td><td>طولانی‌ترین رکورد TP متوالی را برمی‌گرداند</td></tr>
-              <tr><td><code>consecutive_losses(df)</code></td><td>طولانی‌ترین رکورد SL متوالی را برمی‌گرداند</td></tr>
-            </tbody>
-          </table>
+      <details class="item" open>
+        <summary>
+          <span class="tag">analyzer.py</span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:42%">تابع</th><th>توضیح</th></tr></thead>
+              <tbody>
+                <tr><td><code>sdf(df)</code></td><td>نرمال‌سازی دیتافریم: مقادیر رشته‌ای را بزرگ و نام ستون‌ها را کوچک می‌کند</td></tr>
+                <tr><td><code>count_strategies(df)</code></td><td>یک Series شامل تعداد معاملات هر استراتژی برمی‌گرداند</td></tr>
+                <tr><td><code>analyze_win_rate_by_tp1(df)</code></td><td>لیستی از دیکشنری‌ها با نرخ برد هر استراتژی بر اساس TP1 برمی‌گرداند</td></tr>
+                <tr><td><code>sort_key(p_r)</code></td><td>کلید مرتب‌سازی: <code>SL</code> → ۰ و <code>TPn</code> → n</td></tr>
+                <tr><td><code>positions_count(df)</code></td><td>یک Series شامل تعداد وقوع هر پوزیشن برمی‌گرداند</td></tr>
+                <tr><td><code>tp_rewards(df)</code></td><td>برای هر پوزیشن <code>تعداد × اندیس</code> را محاسبه و بر اساس اندیس مرتب می‌کند</td></tr>
+                <tr><td><code>optimized_tp(df)</code></td><td>TP (یا TPهای) با بیشترین پاداش را برمی‌گرداند</td></tr>
+                <tr><td><code>find_andis(position)</code></td><td>اندیس عددی را از رشته پوزیشن استخراج می‌کند (SL → ۱)</td></tr>
+                <tr><td><code>count_best_tps(df)</code></td><td>تعداد برخوردهای TP در سطح بهینه و بالاتر را می‌شمارد</td></tr>
+                <tr><td><code>analyze_win_rate_by_best_tp(df)</code></td><td>نرخ برد به ازای هر TP بهینه را برمی‌گرداند</td></tr>
+                <tr><td><code>positions_list(df)</code></td><td>ستون <code>position</code> را به‌صورت لیست برمی‌گرداند</td></tr>
+                <tr><td><code>consecutive_wins(df)</code></td><td>طولانی‌ترین رکورد TP متوالی را برمی‌گرداند</td></tr>
+                <tr><td><code>consecutive_losses(df)</code></td><td>طولانی‌ترین رکورد SL متوالی را برمی‌گرداند</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </details>
+      </details>
 
-    <details>
-      <summary><strong>dataset_maker.py — برای مشاهده کلیک کنید</strong></summary>
-      <div class="details-body">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:42%">تابع</th>
-                <th>توضیح</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><code>make_dataset()</code></td><td>یک دیتاست CSV مصنوعی (<code>my_dataset.csv</code>) با ۳۶۵ روز معامله‌ی تصادفی تولید می‌کند</td></tr>
-            </tbody>
-          </table>
+      <details class="item">
+        <summary>
+          <span class="tag">dataset_maker.py</span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:42%">تابع</th><th>توضیح</th></tr></thead>
+              <tbody>
+                <tr><td><code>make_dataset()</code></td><td>یک دیتاست CSV مصنوعی (<code>my_dataset.csv</code>) با ۳۶۵ روز معامله‌ی تصادفی تولید می‌کند</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </details>
+      </details>
 
-    <details>
-      <summary><strong>run.py — برای مشاهده کلیک کنید</strong></summary>
-      <div class="details-body">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:42%">تابع</th>
-                <th>توضیح</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td><code>get_address()</code></td><td>مسیر فایل اکسل ذخیره‌شده را از <code>SAVED_ADDRESS.txt</code> می‌خواند</td></tr>
-              <tr><td><code>save_address(input_address)</code></td><td>مسیر فایل اکسل را در <code>SAVED_ADDRESS.txt</code> می‌نویسد</td></tr>
-              <tr><td><code>out(*texts)</code></td><td>هم‌زمان در کنسول چاپ و در فایل خروجی می‌نویسد</td></tr>
-              <tr><td><code>get_input()</code></td><td>مسیر فایل اکسل را می‌پرسد (یا مسیر ذخیره‌شده را استفاده می‌کند) و به CSV تبدیل می‌کند</td></tr>
-              <tr><td><code>use_sample_or_exit()</code></td><td>در صورت نبود فایل، پیشنهاد ساخت و استفاده از دیتاست نمونه را می‌دهد</td></tr>
-              <tr><td><code>main(df)</code></td><td>همه تحلیل‌ها را اجرا و گزارش را خروجی می‌دهد</td></tr>
-              <tr><td><code>run()</code></td><td><code>main()</code> را با مدیریت ورودی و پاک‌سازی Wrap می‌کند</td></tr>
-              <tr><td><code>exit_or_continue()</code></td><td>تحلیل را تا زمانی که کاربر تصمیم به خروج بگیرد، تکرار می‌کند</td></tr>
-            </tbody>
-          </table>
+      <details class="item">
+        <summary>
+          <span class="tag">run.py</span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:42%">تابع</th><th>توضیح</th></tr></thead>
+              <tbody>
+                <tr><td><code>get_address()</code></td><td>مسیر فایل اکسل ذخیره‌شده را از <code>SAVED_ADDRESS.txt</code> می‌خواند</td></tr>
+                <tr><td><code>save_address(input_address)</code></td><td>مسیر فایل اکسل را در <code>SAVED_ADDRESS.txt</code> می‌نویسد</td></tr>
+                <tr><td><code>out(*texts)</code></td><td>هم‌زمان در کنسول چاپ و در فایل خروجی می‌نویسد</td></tr>
+                <tr><td><code>get_input()</code></td><td>مسیر فایل اکسل را می‌پرسد (یا مسیر ذخیره‌شده را استفاده می‌کند) و به CSV تبدیل می‌کند</td></tr>
+                <tr><td><code>use_sample_or_exit()</code></td><td>در صورت نبود فایل، پیشنهاد ساخت و استفاده از دیتاست نمونه را می‌دهد</td></tr>
+                <tr><td><code>main(df)</code></td><td>همه تحلیل‌ها را اجرا و گزارش را خروجی می‌دهد</td></tr>
+                <tr><td><code>run()</code></td><td><code>main()</code> را با مدیریت ورودی و پاک‌سازی Wrap می‌کند</td></tr>
+                <tr><td><code>exit_or_continue()</code></td><td>تحلیل را تا زمانی که کاربر تصمیم به خروج بگیرد، تکرار می‌کند</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </details>
-  </section>
+      </details>
 
-  <hr>
+    </div>
+  </div>
+</section>
 
-  <!-- ============ HOW IT WORKS ============ -->
-  <section id="how-it-works">
-    <h2>نحوه کار</h2>
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">منطق</span>
+      <h2>نحوه کار</h2>
+    </div>
 
-    <h3>جریان داده</h3>
+    <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;text-align:center">جریان داده</h3>
 
-<pre><code>   ┌──────────────┐       ┌──────────────┐       ┌───────────────────┐
+    <div class="code-box" style="margin-bottom:34px">
+      <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">pipeline</span></div>
+      <pre>   ┌──────────────┐       ┌──────────────┐       ┌───────────────────┐
    │  Excel File  │ ───►  │  get_input() │ ───►  │ your_dataset.csv  │
    └──────────────┘       └──────────────┘       └───────────────────┘
                                                           │
@@ -793,22 +1176,15 @@ openpyxl&gt;=3.0</code></pre>
 
    ┌───────────────────┐       ┌──────────────────┐
    │ dataset_maker.py  │ ───►  │  my_dataset.csv  │  ───►  (همان مسیر)
-   └───────────────────┘       └──────────────────┘</code></pre>
+   └───────────────────┘       └──────────────────┘</pre>
+    </div>
 
-    <h3>فرمول پاداش</h3>
+    <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;text-align:center">فرمول پاداش</h3>
+    <p style="text-align:center;color:var(--muted);margin-bottom:14px;font-size:.93rem">به هر پوزیشن یک اندیس عددی اختصاص داده می‌شود:</p>
 
-    <blockquote>
-      <p>به هر پوزیشن یک اندیس عددی اختصاص داده می‌شود:</p>
-    </blockquote>
-
-    <div class="table-wrap">
-      <table style="max-width:420px;margin:1.2em auto;">
-        <thead>
-          <tr>
-            <th class="center">پوزیشن</th>
-            <th class="center">اندیس</th>
-          </tr>
-        </thead>
+    <div class="table-wrap" style="max-width:460px;margin:0 auto 26px">
+      <table>
+        <thead><tr><th class="center">پوزیشن</th><th class="center">اندیس</th></tr></thead>
         <tbody>
           <tr><td class="center"><code>SL</code></td><td class="center">۱</td></tr>
           <tr><td class="center"><code>TP1</code></td><td class="center">۱</td></tr>
@@ -818,53 +1194,57 @@ openpyxl&gt;=3.0</code></pre>
       </table>
     </div>
 
-    <div class="center-block">پاداش = تعداد × اندیس</div>
+    <p style="text-align:center;font-weight:800;font-size:1.05rem;margin-bottom:18px;color:#fff">
+      پاداش = تعداد × اندیس
+    </p>
 
-    <p><strong>مثال:</strong> اگر <code>TP3</code> بیست بار ظاهر شود، پاداش آن برابر است با <code>20 × 3 = 60</code>.</p>
-
-    <h3>انتخاب TP بهینه</h3>
-
-    <p>TP بهینه، TP‌ای است که <strong>بیشترین پاداش کل</strong> را داشته باشد. اگر چند TP مساوی شدند، همه گزارش می‌شوند. پیشنهاد، TP‌ای را هایلایت می‌کند که کوچک‌ترین اندیس را در بین برندگان مساوی دارد.</p>
-
-    <h3>فرمول‌های نرخ برد</h3>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:30%">معیار</th>
-            <th>فرمول</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>نرخ برد TP1</strong></td>
-            <td><code>تعداد TP / (تعداد SL + تعداد TP) × 100</code></td>
-          </tr>
-          <tr>
-            <td><strong>نرخ برد TP بهینه</strong></td>
-            <td><code>تعداد برخوردها در سطح بهینه و بالاتر / کل معاملات × 100</code></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="note" style="margin-bottom:34px">
+      <strong>مثال:</strong> اگر <code>TP3</code> بیست بار ظاهر شود، پاداش آن برابر است با <code>20 × 3 = 60</code>.
     </div>
-  </section>
 
-  <hr>
+    <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:14px;text-align:center">انتخاب TP بهینه</h3>
+    <p style="text-align:center;color:var(--muted);max-width:720px;margin:0 auto 34px;font-size:.94rem">
+      TP بهینه، TP‌ای است که <strong style="color:#fff">بیشترین پاداش کل</strong> را داشته باشد. اگر چند TP مساوی شدند، همه گزارش می‌شوند. پیشنهاد، TP‌ای را هایلایت می‌کند که کوچک‌ترین اندیس را در بین برندگان مساوی دارد.
+    </p>
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="footer">
+    <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;text-align:center">فرمول‌های نرخ برد</h3>
+
+    <div class="formula-grid">
+      <div class="formula">
+        <h4>نرخ برد TP1</h4>
+        <div class="eq">count(TP) / (count(SL) + count(TP)) × 100</div>
+      </div>
+      <div class="formula">
+        <h4>نرخ برد TP بهینه</h4>
+        <div class="eq">count(hits at optimal level and above) / total trades × 100</div>
+      </div>
+    </div>
+
+    <div class="pill-list" style="justify-content:center;margin-top:24px">
+      <span><b>SL</b> → اندیس ۱</span>
+      <span><b>TPn</b> → اندیس n</span>
+      <span><b>پاداش</b> = تعداد × اندیس</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="fbrand">LYM</div>
     <p>
-      <strong>مخزن پروژه:</strong>
-      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
-        https://github.com/kiarashsardari/LYM
-      </a>
+      ساخته‌شده با پایتون — وابسته به <code>pandas</code>، <code>numpy</code> و <code>openpyxl</code>
     </p>
     <p>
-      <strong>ساخته‌شده با پایتون — با وابستگی خارجی به <code>pandas</code>، <code>numpy</code> و <code>openpyxl</code> (تعریف‌شده در <code>requirements.txt</code>)</strong>
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">github.com/kiarashsardari/LYM</a>
+      <span class="fdot">•</span>
+      گزارش تحلیل در <code>Analyze_For_You.txt</code>
     </p>
-  </footer>
+    <p style="margin-top:18px;color:#4a5563;font-size:.8rem">
+      © 2026 LYM — Trading Strategy Analyzer
+    </p>
+  </div>
+</footer>
 
-</div>
 </body>
 </html>
