@@ -1,186 +1,1043 @@
-<div align="center">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYM — تحلیل‌گر استراتژی معاملاتی</title>
+<meta name="description" content="ابزاری پایتونی برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل — گزارش نرخ برد، توزیع پاداش‌ها، TP بهینه و رکورد برد/باخت متوالی">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b10;
+    --surface:#0f151d;
+    --surface-2:#141c26;
+    --border:#1f2937;
+    --border-soft:#172029;
+    --text:#e6edf3;
+    --muted:#8b97a6;
+    --muted-2:#6b7787;
+    --accent:#2dd4bf;
+    --accent-2:#38bdf8;
+    --accent-glow:rgba(45,212,191,.14);
+    --code-bg:#0b1118;
+    --radius:14px;
+    --maxw:1180px;
+    --nav-h:66px;
+    --win:#22c55e;
+    --loss:#ef4444;
+  }
 
-# LYM
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
 
-### تحلیل‌گر استراتژی معاملاتی
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif;
+    font-size:16px;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
+  }
 
-**ابزاری پایتونی برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل**
-**گزارشی خوانا از نرخ برد، توزیع پاداش‌ها، سطوح بهینه‌ی حد سود و رکورد برد/باخت‌های متوالی — از طریق خط فرمان**
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(700px 400px at 85% -5%, rgba(45,212,191,.12), transparent 60%),
+      radial-gradient(700px 400px at 10% 0%, rgba(56,189,248,.10), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
 
-<br>
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;position:relative;z-index:1;}
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
-[![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
-[![openpyxl](https://img.shields.io/badge/openpyxl-3.0%2B-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)](https://openpyxl.readthedocs.io/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-4CAF50?style=for-the-badge)]()
-[![Repository](https://img.shields.io/badge/Repository-LYM-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kiarashsardari/LYM)
+  a{color:var(--accent);text-decoration:none;}
+  a:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;
+  }
 
-</div>
+  code{
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:.85em;
+    background:rgba(56,189,248,.09);
+    color:#7dd3fc;
+    padding:.16em .45em;
+    border-radius:6px;
+    direction:ltr;
+    display:inline-block;
+    unicode-bidi:embed;
+  }
 
----
+  /* NAVBAR */
+  header.nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(8,11,16,.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border-soft);
+  }
 
-<div align="center">
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:var(--nav-h);gap:18px;}
 
-## فهرست مطالب
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;letter-spacing:.5px;color:var(--text);}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 14px var(--accent);}
+  .brand span{background:linear-gradient(135deg,#2dd4bf,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent;}
 
-[ویژگی‌ها](#features) • [ساختار پروژه](#project-structure) • [نصب](#installation) • [شروع سریع](#quick-start)
+  .nav-links{display:flex;align-items:center;gap:18px;font-size:.88rem;font-weight:600;}
+  .nav-links a{color:var(--muted);transition:color .18s;white-space:nowrap;}
+  .nav-links a:hover{color:var(--text);}
 
-[دیتاست نمونه](#sample-dataset) • [نمونه خروجی](#output-example) • [توابع](#functions-reference) • [نحوه کار](#how-it-works) • [نکات مهم](#notes)
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 18px;border-radius:10px;
+    font-weight:700;font-size:.9rem;
+    border:1px solid var(--border);
+    color:var(--text);background:var(--surface);
+    transition:.18s;white-space:nowrap;cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent);background:var(--surface-2);color:var(--text);}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#04121a;border:none;
+    box-shadow:0 6px 22px -8px rgba(45,212,191,.7);
+  }
+  .btn-primary:hover{
+    background:linear-gradient(135deg,#3ee0cb,#4cc4fb);
+    color:#04121a;transform:translateY(-1px);
+  }
+  .btn svg{width:17px;height:17px;fill:currentColor;}
 
-</div>
+  .menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;padding:4px 8px;line-height:1;}
 
----
+  /* HERO */
+  .hero{padding:88px 0 70px;text-align:center;position:relative;}
 
-<a id="features"></a>
-## ویژگی‌ها
+  .hero .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 16px;border-radius:999px;
+    border:1px solid rgba(45,212,191,.32);
+    background:rgba(45,212,191,.07);
+    color:var(--accent);font-size:.83rem;font-weight:700;
+    margin-bottom:26px;
+  }
+  .hero .pill::before{
+    content:"";width:7px;height:7px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 10px var(--accent);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{50%{opacity:.3;}}
 
-| ویژگی | توضیح |
-|:---|:---|
-| **نرمال‌سازی داده** | مقادیر رشته‌ای را به حروف بزرگ و نام ستون‌ها را به حروف کوچک تبدیل می‌کند |
-| **شمارش استراتژی‌ها** | تعداد کل معاملات هر استراتژی را محاسبه می‌کند |
-| **محاسبه پاداش** | پاداش هر پوزیشن را با فرمول `تعداد × اندیس` محاسبه می‌کند |
-| **تشخیص TP بهینه** | سطح حد سودی را پیدا می‌کند که بیشترین پاداش کل را دارد |
-| **نرخ برد بر اساس TP1** | نرخ برد هر استراتژی را با در نظر گرفتن TP1 محاسبه می‌کند |
-| **نرخ برد بر اساس TP بهینه** | نرخ برد را بر اساس بهترین سطح حد سود محاسبه می‌کند |
-| **برد/باخت‌های متوالی** | طولانی‌ترین رکورد TP متوالی و SL متوالی را پیدا می‌کند |
-| **خواندن فایل اکسل** | فایل‌های `.xlsx` را مستقیماً می‌خواند و به CSV موقت تبدیل می‌کند |
-| **دیتاست نمونه** | در صورت نبود فایل ورودی، یک دیتاست نمونه ۳۶۵ روزه می‌سازد |
-| **ذخیره خودکار آدرس** | مسیر آخرین فایل اکسل را برای تحلیل سریع بعدی به خاطر می‌سپارد |
-| **خروجی گزارش** | کل تحلیل را در فایل `Analyze_For_You.txt` ذخیره می‌کند |
-| **اجرای مرحله‌به‌مرحله** | بین بخش‌های تحلیل، با زدن `Enter` نتایج بعدی نمایش داده می‌شوند |
+  .hero h1{
+    font-size:clamp(3rem,8vw,5rem);font-weight:900;
+    letter-spacing:-2px;line-height:1.05;margin-bottom:16px;
+    background:linear-gradient(135deg,#fff 20%,#2dd4bf 60%,#38bdf8 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
 
----
+  .hero .sub{font-size:clamp(1.05rem,2.4vw,1.35rem);font-weight:700;color:var(--text);margin-bottom:20px;}
 
-<a id="project-structure"></a>
-## ساختار پروژه
+  .hero .desc{max-width:760px;margin:0 auto 34px;color:var(--muted);font-size:1.02rem;line-height:2.1;}
+  .hero .desc strong{color:#c9d4e0;font-weight:700;}
 
-```text
-LYM/
-│
-├── run.py                →  نقطه ورود اصلی — مدیریت ورودی، تحلیل و خروجی
-├── analyzer.py           →  توابع اصلی تحلیل (نرخ برد، پاداش‌ها، رکوردها و ...)
-├── dataset_maker.py      →  تولید دیتاست نمونه CSV برای تست
-├── requirements.txt      →  فهرست پیش‌نیازهای پایتونی پروژه
-├── SAMPLE_Excel.xlsx     →  نمونه فایل اکسل ورودی
-│
-├── SAVED_ADDRESS.txt     →  خودکار ساخته می‌شود — مسیر آخرین فایل اکسل
-├── my_dataset.csv        →  خودکار ساخته می‌شود — دیتاست نمونه
-├── your_dataset.csv      →  موقت — تبدیل‌شده از فایل اکسل ورودی
-├── Analyze_For_You.txt   →  خروجی — گزارش کامل تحلیل
-└── README.md             →  همین فایل
-```
+  .hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-bottom:38px;}
 
----
+  .badges{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;}
+  .badges img{height:28px;display:block;border-radius:6px;}
 
-<a id="installation"></a>
-## نصب
+  /* SECTION */
+  section{padding:70px 0;scroll-margin-top:calc(var(--nav-h) + 20px);}
 
-> **پیش‌نیاز:** پایتون نسخه **۳.۸** یا بالاتر
+  .sec-head{margin-bottom:44px;text-align:center;}
+  .sec-head .kicker{
+    display:inline-block;font-size:.8rem;font-weight:800;
+    letter-spacing:2px;color:var(--accent);text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .sec-head h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:900;letter-spacing:-.6px;margin-bottom:12px;}
+  .sec-head p{color:var(--muted);max-width:620px;margin:0 auto;font-size:.98rem;}
 
-### روش ۱ — دانلود ZIP
+  /* GRID & CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:18px;}
 
-<div align="center">
+  .card{
+    background:linear-gradient(160deg,var(--surface),var(--surface-2));
+    border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;transition:.22s;position:relative;overflow:hidden;
+  }
+  .card::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(320px 130px at 100% 0%, var(--accent-glow), transparent 70%);
+    opacity:0;transition:opacity .25s;pointer-events:none;
+  }
+  .card:hover{border-color:rgba(45,212,191,.42);transform:translateY(-4px);}
+  .card:hover::after{opacity:1;}
+  .card .ico{
+    width:42px;height:42px;display:flex;align-items:center;justify-content:center;
+    border-radius:11px;background:rgba(45,212,191,.1);
+    border:1px solid rgba(45,212,191,.24);
+    font-size:1.15rem;margin-bottom:16px;
+  }
+  .card h3{font-size:1.03rem;font-weight:800;margin-bottom:8px;color:#fff;}
+  .card p{font-size:.9rem;color:var(--muted);line-height:1.95;}
 
-**۱.** روی دکمه‌ی سبز **`<> Code`** کلیک کنید **→** **۲.** گزینه‌ی **`Download ZIP`** را بزنید **→** **۳.** فایل را از حالت فشرده خارج کنید
+  /* INTRO */
+  .intro-text{max-width:820px;margin:0 auto 34px;text-align:center;color:var(--muted);font-size:1rem;line-height:2.15;}
+  .intro-text strong{color:#c9d4e0;font-weight:700;}
 
-</div>
+  /* CODE BLOCK */
+  .code-box{
+    background:var(--code-bg);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 20px 50px -30px rgba(0,0,0,.9);
+  }
+  .code-bar{
+    display:flex;align-items:center;gap:8px;padding:12px 16px;
+    background:var(--surface-2);border-bottom:1px solid var(--border);
+  }
+  .code-bar .d{width:11px;height:11px;border-radius:50%;}
+  .code-bar .d1{background:#ff5f57;}
+  .code-bar .d2{background:#febc2e;}
+  .code-bar .d3{background:#28c840;}
+  .code-bar .fn{
+    margin-inline-start:auto;font-family:monospace;
+    font-size:.78rem;color:var(--muted-2);direction:ltr;
+  }
+  .code-box pre{
+    padding:22px 20px;overflow-x:auto;direction:ltr;text-align:left;
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:.87rem;line-height:1.8;color:#c9d4e0;margin:0;
+  }
+  .code-box pre::-webkit-scrollbar{height:8px;}
+  .code-box pre::-webkit-scrollbar-thumb{background:#25313f;border-radius:4px;}
 
-### روش ۲ — کلون با Git
+  .code-box.compact pre{padding:14px 16px;font-size:.82rem;line-height:1.7;}
+  .code-box.compact .code-bar{padding:8px 12px;}
+  .code-box.compact .code-bar .fn{font-size:.72rem;}
 
-```bash
-git clone https://github.com/kiarashsardari/LYM.git
-cd LYM
-```
+  /* INSTALL */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 
-### نصب پکیج‌های موردنیاز
+  .step-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:26px;
+  }
+  .step-card .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:32px;height:32px;border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#04121a;font-weight:900;font-size:.9rem;margin-bottom:14px;
+  }
+  .step-card h3{font-size:1.05rem;font-weight:800;margin-bottom:14px;}
+  .step-card p{color:var(--muted);font-size:.92rem;margin-bottom:12px;}
 
-تمام پیش‌نیازها در فایل `requirements.txt` تعریف شده‌اند. برای نصب یک‌جا، در ریشه‌ی پروژه اجرا کنید:
+  .flow-steps{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:22px;margin-bottom:20px;
+  }
+  .flow-steps .st{
+    padding:7px 14px;border-radius:9px;
+    background:var(--surface-2);border:1px solid var(--border);
+    font-size:.85rem;font-weight:600;color:#c9d4e0;
+  }
+  .flow-steps .ar{color:var(--accent);font-weight:900;}
 
-```bash
-pip install -r requirements.txt
-```
+  .note{
+    border-radius:12px;padding:14px 20px;font-size:.9rem;margin:16px 0;
+    border-inline-start:4px solid var(--accent);
+    background:rgba(45,212,191,.07);color:#b7f5ec;
+  }
+  .note strong{color:#e6fffb;}
+  .note.warn{border-inline-start-color:#fbbf24;background:rgba(251,191,36,.07);color:#fde68a;}
+  .note.warn strong{color:#fff8e1;}
+  .note.danger{border-inline-start-color:var(--loss);background:rgba(239,68,68,.07);color:#fecaca;}
+  .note.danger strong{color:#fff0f0;}
 
-محتوای `requirements.txt`:
+  /* DOWNLOAD CARD */
+  .dl-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    transition: .18s;
+    text-decoration: none;
+  }
+  .dl-card:hover {
+    border-color: var(--accent);
+    background: rgba(45,212,191,.05);
+    transform: translateY(-2px);
+  }
+  .dl-card .dl-ico {
+    font-size: 1.4rem;
+    width: 40px;height: 40px;
+    display: flex;align-items: center;justify-content: center;
+    border-radius: 10px;
+    background: rgba(45,212,191,.1);
+    border: 1px solid rgba(45,212,191,.24);
+    flex-shrink: 0;
+  }
+  .dl-card .dl-info { flex: 1; min-width: 0; }
+  .dl-card .dl-name {
+    font-family: monospace;
+    font-size: .92rem;
+    font-weight: 700;
+    color: #7dd3fc;
+    direction: ltr;
+    text-align: right;
+    margin-bottom: 2px;
+  }
+  .dl-card .dl-meta { font-size: .8rem; color: var(--muted); }
+  .dl-card .dl-arrow { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
 
-```txt
-# Python >= 3.8
-pandas>=1.3
-numpy>=1.20
-openpyxl>=3.0
-```
+  /* TABLE */
+  .table-wrap{
+    border:1px solid var(--border);border-radius:var(--radius);
+    overflow:hidden;background:var(--surface);
+    margin:16px 0;
+  }
+  table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  thead th{
+    background:var(--surface-2);text-align:right;
+    padding:14px 18px;font-weight:800;color:#fff;font-size:.88rem;
+    border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  tbody td{
+    padding:13px 18px;border-bottom:1px solid var(--border-soft);
+    color:var(--muted);vertical-align:top;
+  }
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr:hover{background:rgba(45,212,191,.03);}
+  tbody td strong{color:#dfe8f2;}
+  .center{text-align:center;}
 
-> **نکته:** پکیج `openpyxl` برای خواندن فایل‌های `.xlsx` ضروری است.
+  /* TERMINAL */
+  .terminal{
+    background:#04070a;border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 30px 60px -35px rgba(0,0,0,.95);
+  }
+  .terminal .tbar{
+    display:flex;align-items:center;gap:8px;padding:12px 16px;
+    background:var(--surface-2);border-bottom:1px solid var(--border);
+  }
+  .terminal .tbar .d{width:11px;height:11px;border-radius:50%;}
+  .terminal .tbar .d1{background:#ff5f57;}
+  .terminal .tbar .d2{background:#febc2e;}
+  .terminal .tbar .d3{background:#28c840;}
+  .terminal .tbar .t{
+    margin-inline-start:auto;font-family:monospace;
+    font-size:.78rem;color:var(--muted-2);direction:ltr;
+  }
+  .terminal pre{
+    margin:0;padding:22px 20px;direction:ltr;text-align:left;
+    overflow-x:auto;
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    font-size:.82rem;line-height:1.85;color:#a9e6d6;
+  }
+  .terminal pre::-webkit-scrollbar{height:8px;}
+  .terminal pre::-webkit-scrollbar-thumb{background:#25313f;border-radius:4px;}
 
-> 💡 در صورت نیاز می‌توانید ابتدا `pip` را به‌روزرسانی کنید:
->
-> ```bash
-> python -m pip install --upgrade pip
-> ```
+  /* ACCORDION */
+  .acc{display:flex;flex-direction:column;gap:14px;}
 
-اگر نمی‌خواهید از `requirements.txt` استفاده کنید، نصب دستی هم کافی است:
+  details.item{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;transition:border-color .2s;
+  }
+  details.item[open]{border-color:rgba(45,212,191,.4);}
+  details.item summary{
+    cursor:pointer;padding:18px 22px;font-weight:800;font-size:.98rem;
+    list-style:none;display:flex;align-items:center;gap:12px;
+    color:#fff;user-select:none;transition:background .18s;
+  }
+  details.item summary::-webkit-details-marker{display:none;}
+  details.item summary:hover{background:rgba(45,212,191,.04);}
+  details.item summary .chev{
+    margin-inline-start:auto;color:var(--accent);font-size:.85rem;
+    transition:transform .22s;
+  }
+  details.item[open] summary .chev{transform:rotate(90deg);}
+  details.item summary .tag{
+    font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;
+    background:rgba(56,189,248,.12);color:#7dd3fc;
+    font-family:monospace;direction:ltr;
+  }
+  details.item .body{padding:0 14px 16px;}
 
-```bash
-pip install pandas numpy openpyxl
-```
+  /* FUNCTION CARD */
+  .fn-card{
+    background:linear-gradient(160deg,#0d131a,#111922);
+    border:1px solid var(--border-soft);border-radius:12px;
+    padding:22px;margin-top:12px;
+  }
+  .fn-card:first-child{margin-top:14px;}
 
----
+  .fn-title{
+    font-size:1.05rem;font-weight:800;margin-bottom:10px;
+    color:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .fn-title code{
+    background:rgba(45,212,191,.1);color:var(--accent);
+    padding:.2em .6em;border-radius:6px;font-size:.95rem;
+    border:1px solid rgba(45,212,191,.22);
+  }
 
-<a id="quick-start"></a>
-## شروع سریع
+  .fn-desc{color:var(--muted);font-size:.92rem;margin-bottom:14px;line-height:1.95;}
+  .fn-ret{color:var(--muted);font-size:.9rem;margin:14px 0 10px;line-height:1.9;}
+  .fn-ret strong{color:#c9d4e0;}
 
-### فقط یک دستور تا اجرا
+  .fn-note{
+    border-radius:10px;padding:11px 16px;font-size:.86rem;margin:12px 0;
+    border-inline-start:3px solid #fbbf24;
+    background:rgba(251,191,36,.06);color:#fde68a;line-height:1.9;
+  }
+  .fn-note strong{color:#fff8e1;}
+  .fn-note.info{
+    border-inline-start-color:var(--accent);
+    background:rgba(45,212,191,.07);color:#b7f5ec;
+  }
+  .fn-note.info strong{color:#e6fffb;}
 
-```bash
-python run.py
-```
+  .table-wrap.compact{margin:14px 0;border-radius:10px;}
+  .table-wrap.compact table{font-size:.85rem;}
+  .table-wrap.compact thead th{padding:10px 13px;font-size:.8rem;}
+  .table-wrap.compact tbody td{padding:10px 13px;}
 
-<div align="center">
+  /* EXAMPLE CARD */
+  .ex-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:24px;margin-bottom:18px;
+  }
+  .ex-card h3{
+    font-size:1.08rem;font-weight:800;color:#fff;margin-bottom:10px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .ex-card h3 .badge{
+    font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;
+    background:rgba(56,189,248,.12);color:#7dd3fc;
+    font-family:monospace;direction:ltr;
+  }
+  .ex-card p{color:var(--muted);font-size:.92rem;margin-bottom:14px;}
 
-**برنامه به ترتیب این کارها را انجام می‌دهد:**
+  /* PILL LIST */
+  .pill-list{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;}
+  .pill-list span{
+    padding:5px 13px;border-radius:999px;
+    background:var(--surface-2);border:1px solid var(--border);
+    font-size:.83rem;color:#c9d4e0;
+  }
+  .pill-list span b{color:var(--accent);}
 
-</div>
+  /* FLOW DIAGRAM */
+  .flow-box{
+    background:var(--code-bg);border:1px solid var(--border);
+    border-radius:var(--radius);padding:22px;overflow-x:auto;
+    font-family:"SFMono-Regular",Consolas,monospace;
+    font-size:.82rem;line-height:1.7;direction:ltr;text-align:left;
+    color:#a9e6d6;white-space:pre;
+  }
 
-| مرحله | عملیات |
-|:---:|:---|
-| **۱** | مسیر فایل اکسل را می‌پرسد (یا از مسیر ذخیره‌شده قبلی استفاده می‌کند). |
-| **۲** | اگر فایل پیدا نشد، پیشنهاد می‌دهد از دیتاست نمونه استفاده شود. |
-| **۳** | داده‌ها را نرمال‌سازی کرده و تحلیل‌ها را اجرا می‌کند. |
-| **۴** | نتایج را مرحله‌به‌مرحله نمایش می‌دهد (بین هر بخش `Enter` بزنید). |
-| **۵** | گزارش کامل را در فایل `Analyze_For_You.txt` ذخیره می‌کند. |
+  /* FOOTER */
+  footer{
+    border-top:1px solid var(--border-soft);
+    padding:52px 0 40px;text-align:center;
+    position:relative;z-index:1;
+  }
+  footer .fbrand{
+    font-size:1.5rem;font-weight:900;letter-spacing:.5px;margin-bottom:14px;
+    background:linear-gradient(135deg,#2dd4bf,#38bdf8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  footer p{color:var(--muted-2);font-size:.88rem;margin-bottom:10px;}
+  footer a{font-weight:700;}
+  footer .fdot{display:inline-block;margin:0 8px;color:var(--border);}
 
-### فرمت فایل ورودی
+  /* MOBILE */
+  @media(max-width:980px){
+    .nav-links{
+      display:none;position:absolute;top:var(--nav-h);right:0;left:0;
+      flex-direction:column;align-items:stretch;gap:0;font-size:.95rem;
+      background:rgba(8,11,16,.98);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      padding:6px 24px 14px;
+      box-shadow:0 24px 40px -24px rgba(0,0,0,.9);
+    }
+    .nav-links.open{display:flex;}
+    .nav-links a{padding:13px 2px;border-bottom:1px solid var(--border-soft);color:var(--text);}
+    .nav-links a:last-child{border-bottom:0;}
+    .menu-toggle{display:block;}
+    .nav-inner .btn-primary{display:none;}
+  }
 
-> فایل اکسل شما باید **حداقل این سه ستون** را داشته باشد:
+  @media(max-width:860px){
+    .two-col{grid-template-columns:1fr;}
+    section{padding:54px 0;}
+    .hero{padding:60px 0 40px;}
+    .wrap{padding:0 18px;}
+  }
 
-| ستون | توضیح | مقادیر نمونه |
-|:---:|:---|:---|
-| `date` | تاریخ معامله | `2026-01-01` |
-| `position` | نتیجه معامله | `SL`, `TP1`, `TP2`, … , `TP20` |
-| `strategy` | شناسه استراتژی | `A`, `B`, `C`, … |
+  @media(max-width:640px){
+    thead th,tbody td{padding:11px 13px;}
+    .code-box pre,.terminal pre{font-size:.78rem;padding:16px 14px;}
+    .step-card{padding:20px;}
+    .card{padding:20px;}
+    .fn-card{padding:18px;}
+    .ex-card{padding:18px;}
+  }
+</style>
+</head>
+<body>
 
-**نمونه فایل ورودی:** فایل `SAMPLE_Excel.xlsx` در ریشه‌ی پروژه قرار دارد و می‌توانید مسیر آن را در برنامه وارد کنید.
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="brand"><span class="dot"></span><span>LYM</span></a>
 
----
+    <nav class="nav-links" id="navLinks">
+      <a href="#intro">معرفی</a>
+      <a href="#features">ویژگی‌ها</a>
+      <a href="#install">نصب</a>
+      <a href="#quickstart">شروع سریع</a>
+      <a href="#functions">توابع</a>
+      <a href="#output">خروجی</a>
+      <a href="#how-it-works">نحوه کار</a>
+      <a href="#notes">نکات</a>
+    </nav>
 
-<a id="sample-dataset"></a>
-## دیتاست نمونه
+    <a class="btn btn-primary" href="https://github.com/kiarashsardari" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      My GitHub
+    </a>
 
-> **نکته:** اگر فایل اکسل ارائه نشود، برنامه از طریق `dataset_maker.py` یک دیتاست نمونه می‌سازد.
+    <button class="menu-toggle" id="menuToggle" aria-label="منو" aria-controls="navLinks" aria-expanded="false">☰</button>
+  </div>
+</header>
 
-- **۳۶۵ روز** معامله‌ی مصنوعی برای سال ۲۰۲۶ (یک معامله در روز).
-- **پوزیشن‌ها** به‌صورت تصادفی با احتمالات وزن‌دار از بین `SL` و `TP1` تا `TP20` انتخاب می‌شوند.
-- **استراتژی‌ها** به‌صورت تصادفی از `A` تا `H` انتخاب می‌شوند.
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="pill">تحلیل‌گر استراتژی معاملاتی</div>
+    <h1>LYM</h1>
+    <div class="sub">نرخ برد، پاداش‌ها، TP بهینه و رکوردها — در یک گزارش خوانا</div>
+    <p class="desc">
+      <strong>ابزاری پایتونی</strong> برای تحلیل عملکرد استراتژی‌های معاملاتی از روی فایل‌های اکسل.<br>
+      گزارشی خوانا از <strong>نرخ برد</strong>، <strong>توزیع پاداش‌ها</strong>، <strong>سطوح بهینه‌ی حد سود</strong> و <strong>رکورد برد/باخت‌های متوالی</strong> — از طریق خط فرمان.
+    </p>
 
-این امکان به شما اجازه می‌دهد **بدون هیچ داده‌ی خارجی، کل فرایند را تست کنید.**
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/kiarashsardari/LYM/archive/refs/heads/main.zip">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 12L3 7h3V1h4v6h3zM2 14h12v2H2z"/></svg>
+        دانلود ZIP پروژه
+      </a>
+      <a class="btn" href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        مشاهده مخزن
+      </a>
+      <a class="btn" href="#quickstart">شروع سریع</a>
+    </div>
 
----
+    <div class="badges">
+      <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white&style=for-the-badge" alt="Python">
+      <img src="https://img.shields.io/badge/pandas-Required-150458?logo=pandas&logoColor=white&style=for-the-badge" alt="pandas">
+      <img src="https://img.shields.io/badge/NumPy-Required-013243?logo=numpy&logoColor=white&style=for-the-badge" alt="NumPy">
+      <img src="https://img.shields.io/badge/openpyxl-3.0%2B-217346?logo=microsoftexcel&logoColor=white&style=for-the-badge" alt="openpyxl">
+    </div>
+  </div>
+</section>
 
-<a id="output-example"></a>
-## نمونه خروجی
+<!-- ============ INTRO ============ -->
+<section id="intro">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">معرفی</span>
+      <h2>LYM چیست؟</h2>
+    </div>
 
-```text
---- Total trades per strategy ---
+    <p class="intro-text">
+      <strong>LYM</strong> یک تحلیل‌گر خط فرمان است که فایل اکسل معاملات شما را می‌خواند و عملکرد استراتژی‌های معاملاتی را در قالب گزارشی منظم ارزیابی می‌کند. این ابزار با تکیه بر <strong>pandas</strong> و <strong>numpy</strong> داده‌ها را پاکسازی و تحلیل می‌کند و <strong>openpyxl</strong> را برای خواندن مستقیم فایل‌های <code>.xlsx</code> به‌کار می‌گیرد. کافی است مسیر فایل اکسل را وارد کنید تا گزارش کامل در فایل <code>Analyze_For_You.txt</code> ذخیره شود.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="ico">📊</div>
+        <h3>معامله‌گران</h3>
+        <p>سنجش عملکرد استراتژی‌های واقعی و شناسایی استراتژی‌های برنده.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔬</div>
+        <h3>تحلیلگران بازار</h3>
+        <p>بررسی توزیع پاداش‌ها و یافتن سطوح بهینه‌ی حد سود (TP).</p>
+      </div>
+      <div class="card">
+        <div class="ico">📈</div>
+        <h3>پژوهشگران بک‌تست</h3>
+        <p>مقایسه‌ی نرخ برد بین استراتژی‌ها و رکوردهای متوالی.</p>
+      </div>
+      <div class="card">
+        <div class="ico">⚡</div>
+        <h3>کاربران روزمره</h3>
+        <p>گزارش خودکار در <code>Analyze_For_You.txt</code> — بدون نوشتن کد.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">قابلیت‌ها</span>
+      <h2>ویژگی‌های کلیدی</h2>
+      <p>دوازده قابلیت اصلی که LYM در اختیار شما می‌گذارد.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="ico">🧹</div>
+        <h3>نرمال‌سازی داده</h3>
+        <p>مقادیر رشته‌ای را به حروف بزرگ و نام ستون‌ها را به حروف کوچک تبدیل می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔢</div>
+        <h3>شمارش استراتژی‌ها</h3>
+        <p>تعداد کل معاملات هر استراتژی را محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🏆</div>
+        <h3>محاسبه پاداش</h3>
+        <p>پاداش هر پوزیشن را با فرمول <code>تعداد × اندیس</code> محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎯</div>
+        <h3>تشخیص TP بهینه</h3>
+        <p>سطح حد سودی را پیدا می‌کند که بیشترین پاداش کل را دارد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📉</div>
+        <h3>نرخ برد بر اساس TP1</h3>
+        <p>نرخ برد هر استراتژی را با در نظر گرفتن TP1 محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📈</div>
+        <h3>نرخ برد بر اساس TP بهینه</h3>
+        <p>نرخ برد را بر اساس بهترین سطح حد سود محاسبه می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔥</div>
+        <h3>برد/باخت‌های متوالی</h3>
+        <p>طولانی‌ترین رکورد TP متوالی و SL متوالی را پیدا می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📂</div>
+        <h3>خواندن فایل اکسل</h3>
+        <p>فایل‌های <code>.xlsx</code> را مستقیماً می‌خواند و به CSV موقت تبدیل می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎲</div>
+        <h3>دیتاست نمونه</h3>
+        <p>در صورت نبود فایل ورودی، یک دیتاست نمونه ۳۶۵ روزه می‌سازد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">💾</div>
+        <h3>ذخیره خودکار آدرس</h3>
+        <p>مسیر آخرین فایل اکسل را برای تحلیل سریع بعدی به خاطر می‌سپارد.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📄</div>
+        <h3>خروجی گزارش</h3>
+        <p>کل تحلیل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند.</p>
+      </div>
+      <div class="card">
+        <div class="ico">⏸️</div>
+        <h3>اجرای مرحله‌به‌مرحله</h3>
+        <p>بین بخش‌های تحلیل، با زدن <code>Enter</code> نتایج بعدی نمایش داده می‌شوند.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTALL ============ -->
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">راه‌اندازی</span>
+      <h2>نصب و پیش‌نیازها</h2>
+      <p>پیش‌نیاز: پایتون نسخه <strong style="color:#fff">۳.۸</strong> یا بالاتر</p>
+    </div>
+
+    <div class="flow-steps">
+      <span class="st">۱. دکمه <code>&lt;&gt; Code</code></span>
+      <span class="ar">→</span>
+      <span class="st">۲. <code>Download ZIP</code></span>
+      <span class="ar">→</span>
+      <span class="st">۳. استخراج فایل</span>
+    </div>
+
+    <div class="two-col">
+      <div class="step-card">
+        <span class="num">۱</span>
+        <h3>روش ۱ — دانلود ZIP</h3>
+        <p>بدون نیاز به Git. با کلیک روی دکمه‌ی زیر، فایل ZIP پروژه مستقیماً دانلود می‌شود.</p>
+        <a class="btn btn-primary" href="https://github.com/kiarashsardari/LYM/archive/refs/heads/main.zip">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 12L3 7h3V1h4v6h3zM2 14h12v2H2z"/></svg>
+          دانلود ZIP مستقیم
+        </a>
+      </div>
+
+      <div class="step-card">
+        <span class="num">۲</span>
+        <h3>روش ۲ — کلون با Git</h3>
+        <p>اگر Git دارید، مخزن را کلون کنید:</p>
+        <div class="code-box" style="margin-top:8px">
+          <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+          <pre>git clone https://github.com/kiarashsardari/LYM.git
+cd LYM</pre>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px" class="step-card">
+      <h3>نصب پکیج‌های موردنیاز</h3>
+      <p>تمام پیش‌نیازها در فایل <code>requirements.txt</code> تعریف شده‌اند. برای نصب یک‌جا، در ریشه‌ی پروژه اجرا کنید:</p>
+
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+        <pre>pip install -r requirements.txt</pre>
+      </div>
+
+      <p style="margin-top:18px">محتوای <code>requirements.txt</code>:</p>
+
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">requirements.txt</span></div>
+        <pre># Python >= 3.8
+pandas&gt;=1.3
+numpy&gt;=1.20
+openpyxl&gt;=3.0</pre>
+      </div>
+
+      <div class="note warn">
+        <strong>نکته:</strong> پکیج <code>openpyxl</code> برای خواندن فایل‌های <code>.xlsx</code> ضروری است.
+      </div>
+
+      <p style="margin-top:14px">اگر نمی‌خواهید از <code>requirements.txt</code> استفاده کنید، نصب دستی هم کافی است:</p>
+      <div class="code-box">
+        <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+        <pre>pip install pandas numpy openpyxl</pre>
+      </div>
+
+      <div class="note warn">
+        💡 در صورت نیاز می‌توانید ابتدا <code>pip</code> را به‌روزرسانی کنید:
+        <div class="code-box" style="margin-top:10px">
+          <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+          <pre>python -m pip install --upgrade pip</pre>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:26px" class="step-card">
+      <h3>دانلود فایل‌های تکی</h3>
+      <p>اگر فقط به یکی از فایل‌ها نیاز دارید، مستقیم دانلود کنید:</p>
+
+      <div class="grid" style="grid-template-columns:1fr;margin-top:16px;gap:12px">
+        <a class="dl-card" href="https://raw.githubusercontent.com/kiarashsardari/LYM/main/run.py" download="run.py">
+          <div class="dl-ico">🚀</div>
+          <div class="dl-info">
+            <div class="dl-name">run.py</div>
+            <div class="dl-meta">نقطه ورود اصلی — مدیریت ورودی، تحلیل و خروجی</div>
+          </div>
+          <div class="dl-arrow">⬇</div>
+        </a>
+
+        <a class="dl-card" href="https://raw.githubusercontent.com/kiarashsardari/LYM/main/analyzer.py" download="analyzer.py">
+          <div class="dl-ico">🧠</div>
+          <div class="dl-info">
+            <div class="dl-name">analyzer.py</div>
+            <div class="dl-meta">توابع اصلی تحلیل (نرخ برد، پاداش‌ها، رکوردها و…)</div>
+          </div>
+          <div class="dl-arrow">⬇</div>
+        </a>
+
+        <a class="dl-card" href="https://raw.githubusercontent.com/kiarashsardari/LYM/main/dataset_maker.py" download="dataset_maker.py">
+          <div class="dl-ico">🎲</div>
+          <div class="dl-info">
+            <div class="dl-name">dataset_maker.py</div>
+            <div class="dl-meta">تولید دیتاست نمونه CSV برای تست</div>
+          </div>
+          <div class="dl-arrow">⬇</div>
+        </a>
+
+        <a class="dl-card" href="https://raw.githubusercontent.com/kiarashsardari/LYM/main/requirements.txt" download="requirements.txt">
+          <div class="dl-ico">📦</div>
+          <div class="dl-info">
+            <div class="dl-name">requirements.txt</div>
+            <div class="dl-meta">وابستگی‌های پروژه</div>
+          </div>
+          <div class="dl-arrow">⬇</div>
+        </a>
+      </div>
+
+      <div class="note warn" style="margin-top:16px">
+        💡 اگر فایل در مرورگر باز شد، راست‌کلیک → «Save link as» را انتخاب کنید. برای دانلود تضمینی، از دکمه‌ی ZIP بالا استفاده کنید.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUICKSTART ============ -->
+<section id="quickstart">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">شروع</span>
+      <h2>شروع سریع</h2>
+      <p>فقط یک دستور تا اجرا.</p>
+    </div>
+
+    <div class="code-box" style="max-width:640px;margin:0 auto 24px">
+      <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+      <pre>python run.py</pre>
+    </div>
+
+    <h3 style="font-size:1.05rem;font-weight:800;margin:24px 0 12px;text-align:center">برنامه به ترتیب این کارها را انجام می‌دهد</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:60px">مرحله</th><th>عملیات</th></tr></thead>
+        <tbody>
+          <tr><td class="center"><strong>۱</strong></td><td>مسیر فایل اکسل را می‌پرسد (یا از مسیر ذخیره‌شده قبلی استفاده می‌کند).</td></tr>
+          <tr><td class="center"><strong>۲</strong></td><td>اگر فایل پیدا نشد، پیشنهاد می‌دهد از دیتاست نمونه استفاده شود.</td></tr>
+          <tr><td class="center"><strong>۳</strong></td><td>داده‌ها را نرمال‌سازی کرده و تحلیل‌ها را اجرا می‌کند.</td></tr>
+          <tr><td class="center"><strong>۴</strong></td><td>نتایج را مرحله‌به‌مرحله نمایش می‌دهد (بین هر بخش <code>Enter</code> بزنید).</td></tr>
+          <tr><td class="center"><strong>۵</strong></td><td>گزارش کامل را در فایل <code>Analyze_For_You.txt</code> ذخیره می‌کند.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1.05rem;font-weight:800;margin:32px 0 12px">فرمت فایل ورودی</h3>
+    <p style="color:var(--muted);font-size:.95rem;margin-bottom:14px">فایل اکسل شما باید <strong style="color:#fff">حداقل این سه ستون</strong> را داشته باشد:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ستون</th><th>توضیح</th><th>مقادیر نمونه</th></tr></thead>
+        <tbody>
+          <tr><td><code>date</code></td><td>تاریخ معامله</td><td><code>2026-01-01</code></td></tr>
+          <tr><td><code>position</code></td><td>نتیجه معامله</td><td><code>SL</code>، <code>TP1</code>، <code>TP2</code>، …، <code>TP20</code></td></tr>
+          <tr><td><code>strategy</code></td><td>شناسه استراتژی</td><td><code>A</code>، <code>B</code>، <code>C</code>، …</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <strong>نمونه فایل ورودی:</strong> فایل <code>SAMPLE_Excel.xlsx</code> در ریشه‌ی پروژه قرار دارد و می‌توانید مسیر آن را در برنامه وارد کنید.
+    </div>
+
+    <h3 style="font-size:1.05rem;font-weight:800;margin:32px 0 12px">دیتاست نمونه</h3>
+    <div class="ex-card">
+      <p style="margin-bottom:12px">
+        اگر فایل اکسل ارائه نشود، برنامه از طریق <code>dataset_maker.py</code> یک دیتاست نمونه می‌سازد:
+      </p>
+      <ul style="color:var(--muted);font-size:.92rem;line-height:2.1;padding-inline-start:22px">
+        <li><strong style="color:#dfe8f2">۳۶۵ روز</strong> معامله‌ی مصنوعی برای سال ۲۰۲۶ (یک معامله در روز).</li>
+        <li>پوزیشن‌ها به‌صورت تصادفی با احتمالات وزن‌دار از بین <code>SL</code> و <code>TP1</code> تا <code>TP20</code> انتخاب می‌شوند.</li>
+        <li>استراتژی‌ها به‌صورت تصادفی از <code>A</code> تا <code>H</code> انتخاب می‌شوند.</li>
+      </ul>
+      <div class="note info" style="margin-top:14px">
+        💡 این امکان به شما اجازه می‌دهد <strong>بدون هیچ داده‌ی خارجی، کل فرایند را تست کنید.</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FUNCTIONS ============ -->
+<section id="functions">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">API</span>
+      <h2>توابع</h2>
+      <p>مرجع کامل توابع موجود در هر ماژول.</p>
+    </div>
+
+    <div class="acc">
+
+      <!-- ==== analyzer.py ==== -->
+      <details class="item" open>
+        <summary>
+          <span class="tag">analyzer.py</span>
+          توابع اصلی تحلیل
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+
+          <div class="fn-card">
+            <div class="fn-title"><code>sdf(df)</code></div>
+            <p class="fn-desc">نرمال‌سازی دیتافریم: مقادیر رشته‌ای را بزرگ و نام ستون‌ها را کوچک می‌کند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>count_strategies(df)</code></div>
+            <p class="fn-desc">تعداد معاملات هر استراتژی را می‌شمارد.</p>
+            <p class="fn-ret"><strong>بازگشتی:</strong> <code>pandas.Series</code> — تعداد معاملات به‌ازای هر استراتژی.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>analyze_win_rate_by_tp1(df)</code></div>
+            <p class="fn-desc">نرخ برد هر استراتژی را بر اساس TP1 محاسبه می‌کند.</p>
+            <p class="fn-ret"><strong>بازگشتی:</strong> <code>list[dict]</code> — لیستی از دیکشنری‌ها با کلیدهای stop loss، take profit و win rate.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>sort_key(p_r)</code></div>
+            <p class="fn-desc">کلید مرتب‌سازی برای رشته‌های پوزیشن: <code>SL</code> → ۰ و <code>TPn</code> → n.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>positions_count(df)</code></div>
+            <p class="fn-desc">تعداد وقوع هر پوزیشن را می‌شمارد.</p>
+            <p class="fn-ret"><strong>بازگشتی:</strong> <code>pandas.Series</code></p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>tp_rewards(df)</code></div>
+            <p class="fn-desc">برای هر پوزیشن <code>تعداد × اندیس</code> را محاسبه و بر اساس اندیس مرتب می‌کند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>optimized_tp(df)</code></div>
+            <p class="fn-desc">TP (یا TPهای) با بیشترین پاداش را برمی‌گرداند. <code>SL</code> از محاسبه حذف می‌شود.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>find_andis(position)</code></div>
+            <p class="fn-desc">اندیس عددی را از رشته پوزیشن استخراج می‌کند.</p>
+            <p class="fn-ret"><strong>نگاشت:</strong> <code>SL</code> → ۱ و <code>TPn</code> → n</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>count_best_tps(df)</code></div>
+            <p class="fn-desc">تعداد برخوردهای TP در سطح بهینه و بالاتر را می‌شمارد.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>analyze_win_rate_by_best_tp(df)</code></div>
+            <p class="fn-desc">نرخ برد به ازای هر TP بهینه را برمی‌گرداند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>positions_list(df)</code></div>
+            <p class="fn-desc">ستون <code>position</code> را به‌صورت لیست برمی‌گرداند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>consecutive_wins(df)</code></div>
+            <p class="fn-desc">طولانی‌ترین رکورد TP متوالی را برمی‌گرداند.</p>
+            <p class="fn-ret"><strong>بازگشتی:</strong> <code>int</code></p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>consecutive_losses(df)</code></div>
+            <p class="fn-desc">طولانی‌ترین رکورد SL متوالی را برمی‌گرداند.</p>
+            <p class="fn-ret"><strong>بازگشتی:</strong> <code>int</code></p>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- ==== dataset_maker.py ==== -->
+      <details class="item">
+        <summary>
+          <span class="tag">dataset_maker.py</span>
+          تولید دیتاست نمونه
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+
+          <div class="fn-card">
+            <div class="fn-title"><code>make_dataset()</code></div>
+            <p class="fn-desc">یک دیتاست CSV مصنوعی (<code>my_dataset.csv</code>) با ۳۶۵ روز معامله‌ی تصادفی تولید می‌کند.</p>
+            <p class="fn-ret"><strong>خروجی:</strong> فایل <code>my_dataset.csv</code> در ریشه‌ی پروژه.</p>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- ==== run.py ==== -->
+      <details class="item">
+        <summary>
+          <span class="tag">run.py</span>
+          نقطه ورود و مدیریت اجرا
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+
+          <div class="fn-card">
+            <div class="fn-title"><code>get_address()</code></div>
+            <p class="fn-desc">مسیر فایل اکسل ذخیره‌شده را از <code>SAVED_ADDRESS.txt</code> می‌خواند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>save_address(input_address)</code></div>
+            <p class="fn-desc">مسیر فایل اکسل را در <code>SAVED_ADDRESS.txt</code> می‌نویسد.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>out(*texts)</code></div>
+            <p class="fn-desc">هم‌زمان در کنسول چاپ و در فایل خروجی می‌نویسد.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>get_input()</code></div>
+            <p class="fn-desc">مسیر فایل اکسل را می‌پرسد (یا با <code>O</code> مسیر ذخیره‌شده را استفاده می‌کند) و به CSV تبدیل می‌کند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>use_sample_or_exit()</code></div>
+            <p class="fn-desc">در صورت نبود فایل، پیشنهاد ساخت و استفاده از دیتاست نمونه را می‌دهد.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>main(df)</code></div>
+            <p class="fn-desc">همه تحلیل‌ها را اجرا و گزارش را خروجی می‌دهد.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>run()</code></div>
+            <p class="fn-desc"><code>main()</code> را با مدیریت ورودی و پاک‌سازی فایل موقت Wrap می‌کند.</p>
+          </div>
+
+          <div class="fn-card">
+            <div class="fn-title"><code>exit_or_continue()</code></div>
+            <p class="fn-desc">تحلیل را تا زمانی که کاربر تصمیم به خروج بگیرد، تکرار می‌کند.</p>
+          </div>
+
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTPUT EXAMPLE ============ -->
+<section id="output">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">نمونه</span>
+      <h2>نمونه خروجی</h2>
+      <p>گزارشی که در فایل <code>Analyze_For_You.txt</code> ذخیره می‌شود.</p>
+    </div>
+
+    <div class="terminal">
+      <div class="tbar">
+        <span class="d d1"></span><span class="d d2"></span><span class="d d3"></span>
+        <span class="t">Analyze_For_You.txt</span>
+      </div>
+      <pre>--- Total trades per strategy ---
 
 Strategy  Count
 
@@ -203,7 +1060,7 @@ Number of SLs : 48
 
 Position : Win rate
 
-TP3 : 45.20 %  << suggested
+TP3 : 45.20 %  &lt;&lt; suggested
 TP4 : 38.10 %
 
 --- Win rates of each strategy with TP1 ---
@@ -222,77 +1079,25 @@ Strategy: B | Stop Loss: 12 | Take Profit: 20 | Win Rate: 62.50 %
 
 3
 
---- Good luck! ---
-```
+--- Good luck! ---</pre>
+    </div>
 
-> اعداد بالا صرفاً برای نمایش ساختار گزارش هستند. خروجی واقعی بر اساس فایل ورودی شما محاسبه می‌شود.
+    <div class="note warn" style="max-width:760px;margin:22px auto 0">
+      اعداد بالا صرفاً برای نمایش ساختار گزارش هستند. خروجی واقعی بر اساس فایل ورودی شما محاسبه می‌شود.
+    </div>
+  </div>
+</section>
 
----
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how-it-works">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">نحوه کار</span>
+      <h2>جریان داده و فرمول‌ها</h2>
+    </div>
 
-<a id="functions-reference"></a>
-## توابع
-
-<details>
-<summary><b>analyzer.py — برای مشاهده کلیک کنید</b></summary>
-
-<br>
-
-| تابع | توضیح |
-|:---|:---|
-| `sdf(df)` | نرمال‌سازی دیتافریم: مقادیر رشته‌ای را بزرگ و نام ستون‌ها را کوچک می‌کند |
-| `count_strategies(df)` | یک Series شامل تعداد معاملات هر استراتژی برمی‌گرداند |
-| `analyze_win_rate_by_tp1(df)` | لیستی از دیکشنری‌ها با نرخ برد هر استراتژی بر اساس TP1 برمی‌گرداند |
-| `sort_key(p_r)` | کلید مرتب‌سازی: `SL` → ۰ و `TPn` → n |
-| `positions_count(df)` | یک Series شامل تعداد وقوع هر پوزیشن برمی‌گرداند |
-| `tp_rewards(df)` | برای هر پوزیشن `تعداد × اندیس` را محاسبه و بر اساس اندیس مرتب می‌کند |
-| `optimized_tp(df)` | TP (یا TPهای) با بیشترین پاداش را برمی‌گرداند؛ `SL` از محاسبه حذف می‌شود |
-| `find_andis(position)` | اندیس عددی را از رشته پوزیشن استخراج می‌کند (`SL` → ۱ و `TPn` → n) |
-| `count_best_tps(df)` | تعداد برخوردهای TP در سطح بهینه و بالاتر را می‌شمارد |
-| `analyze_win_rate_by_best_tp(df)` | نرخ برد به ازای هر TP بهینه را برمی‌گرداند |
-| `positions_list(df)` | ستون `position` را به‌صورت لیست برمی‌گرداند |
-| `consecutive_wins(df)` | طولانی‌ترین رکورد TP متوالی را برمی‌گرداند |
-| `consecutive_losses(df)` | طولانی‌ترین رکورد SL متوالی را برمی‌گرداند |
-
-</details>
-
-<details>
-<summary><b>dataset_maker.py — برای مشاهده کلیک کنید</b></summary>
-
-<br>
-
-| تابع | توضیح |
-|:---|:---|
-| `make_dataset()` | یک دیتاست CSV مصنوعی (`my_dataset.csv`) با ۳۶۵ روز معامله‌ی تصادفی تولید می‌کند |
-
-</details>
-
-<details>
-<summary><b>run.py — برای مشاهده کلیک کنید</b></summary>
-
-<br>
-
-| تابع | توضیح |
-|:---|:---|
-| `get_address()` | مسیر فایل اکسل ذخیره‌شده را از `SAVED_ADDRESS.txt` می‌خواند |
-| `save_address(input_address)` | مسیر فایل اکسل را در `SAVED_ADDRESS.txt` می‌نویسد |
-| `out(*texts)` | هم‌زمان در کنسول چاپ و در فایل خروجی می‌نویسد |
-| `get_input()` | مسیر فایل اکسل را می‌پرسد (یا مسیر ذخیره‌شده را با `O` استفاده می‌کند) و به CSV تبدیل می‌کند |
-| `use_sample_or_exit()` | در صورت نبود فایل، پیشنهاد ساخت و استفاده از دیتاست نمونه را می‌دهد |
-| `main(df)` | همه تحلیل‌ها را اجرا و گزارش را خروجی می‌دهد |
-| `run()` | `main()` را با مدیریت ورودی و پاک‌سازی فایل موقت Wrap می‌کند |
-| `exit_or_continue()` | تحلیل را تا زمانی که کاربر تصمیم به خروج بگیرد، تکرار می‌کند |
-
-</details>
-
----
-
-<a id="how-it-works"></a>
-## نحوه کار
-
-### جریان داده
-
-```text
-   ┌──────────────────┐       ┌──────────────┐       ┌───────────────────┐
+    <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:12px">جریان داده</h3>
+    <div class="flow-box">   ┌──────────────────┐       ┌──────────────┐       ┌───────────────────┐
    │  Excel (.xlsx)   │ ───►  │  get_input() │ ───►  │ your_dataset.csv  │
    └──────────────────┘       └──────────────┘       └───────────────────┘
                                                               │
@@ -310,59 +1115,175 @@ Strategy: B | Stop Loss: 12 | Take Profit: 20 | Win Rate: 62.50 %
 
    ┌───────────────────┐       ┌──────────────────┐
    │ dataset_maker.py  │ ───►  │  my_dataset.csv  │  ───►  (همان مسیر)
-   └───────────────────┘       └──────────────────┘
-```
+   └───────────────────┘       └──────────────────┘</div>
 
-### فرمول پاداش
+    <h3 style="font-size:1.05rem;font-weight:800;margin:32px 0 12px">فرمول پاداش</h3>
+    <p style="color:var(--muted);font-size:.95rem;margin-bottom:14px">به هر پوزیشن یک اندیس عددی اختصاص داده می‌شود:</p>
 
-> به هر پوزیشن یک اندیس عددی اختصاص داده می‌شود:
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>پوزیشن</th><th class="center">اندیس</th></tr></thead>
+        <tbody>
+          <tr><td><code>SL</code></td><td class="center">۱</td></tr>
+          <tr><td><code>TP1</code></td><td class="center">۱</td></tr>
+          <tr><td><code>TP2</code></td><td class="center">۲</td></tr>
+          <tr><td><code>TPn</code></td><td class="center">n</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-<div align="center">
+    <div class="note info">
+      <strong>پاداش = تعداد × اندیس</strong>
+      <br><br>
+      <strong>مثال:</strong> اگر <code>TP3</code> بیست بار ظاهر شود، پاداش آن برابر است با <code>20 × 3 = 60</code>.
+    </div>
 
-| پوزیشن | اندیس |
-|:---:|:---:|
-| `SL` | ۱ |
-| `TP1` | ۱ |
-| `TP2` | ۲ |
-| `TPn` | n |
+    <h3 style="font-size:1.05rem;font-weight:800;margin:32px 0 12px">انتخاب TP بهینه</h3>
+    <p style="color:var(--muted);font-size:.95rem;line-height:2.1;margin-bottom:14px">
+      TP بهینه، TP‌ای است که <strong style="color:#fff">بیشترین پاداش کل</strong> را داشته باشد. اگر چند TP مساوی شدند، همه گزارش می‌شوند. پیشنهاد، TP‌ای را هایلایت می‌کند که کوچک‌ترین اندیس را در بین برندگان مساوی دارد.
+    </p>
 
-**پاداش = تعداد × اندیس**
+    <h3 style="font-size:1.05rem;font-weight:800;margin:32px 0 12px">فرمول‌های نرخ برد</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>معیار</th><th>فرمول</th></tr></thead>
+        <tbody>
+          <tr><td><strong>نرخ برد TP1</strong></td><td style="direction:ltr;text-align:left"><code>TP / (SL + TP) × 100</code></td></tr>
+          <tr><td><strong>نرخ برد TP بهینه</strong></td><td style="direction:ltr;text-align:left"><code>hits at optimal &amp; above / total × 100</code></td></tr>
+        </tbody>
+      </table>
+    </div>
 
-</div>
+    <div class="note">
+      در محاسبه‌ی نرخ برد بر اساس TP1، اگر استراتژی فقط TP داشته باشد نرخ برد <strong>۱۰۰٪</strong> و اگر فقط SL داشته باشد نرخ برد <strong>۰٪</strong> در نظر گرفته می‌شود.
+    </div>
+  </div>
+</section>
 
-**مثال:** اگر `TP3` بیست بار ظاهر شود، پاداش آن برابر است با `20 × 3 = 60`.
+<!-- ============ NOTES ============ -->
+<section id="notes">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">مهم</span>
+      <h2>نکات مهم</h2>
+    </div>
 
-### انتخاب TP بهینه
+    <div class="ex-card" style="max-width:900px;margin:0 auto">
+      <ul style="color:var(--muted);font-size:.95rem;line-height:2.2;padding-inline-start:22px">
+        <li>فایل ورودی باید حداقل ستون‌های <code>date</code>، <code>position</code> و <code>strategy</code> را داشته باشد.</li>
+        <li>نام ستون‌ها به حروف کوچک و مقادیر رشته‌ای به حروف بزرگ تبدیل می‌شوند؛ بنابراین <code>Date</code> یا <code>Position</code> هم قابل قبول است.</li>
+        <li>مقادیر ستون <code>position</code> باید <code>SL</code> یا به شکل <code>TPn</code> باشند.</li>
+        <li>فایل ورودی باید پسوند <code>.xlsx</code> داشته باشد.</li>
+        <li>مسیر آخرین فایل اکسل در <code>SAVED_ADDRESS.txt</code> ذخیره می‌شود؛ در اجرای بعدی می‌توانید با زدن <code>O</code> همان فایل را دوباره تحلیل کنید.</li>
+        <li>فایل <code>your_dataset.csv</code> موقت است و در پایان اجرا حذف می‌شود.</li>
+        <li>فایل <code>Analyze_For_You.txt</code> در هر اجرا بازنویسی می‌شود.</li>
+      </ul>
 
-TP بهینه، TP‌ای است که **بیشترین پاداش کل** را داشته باشد. اگر چند TP مساوی شدند، همه گزارش می‌شوند. پیشنهاد، TP‌ای را هایلایت می‌کند که کوچک‌ترین اندیس را در بین برندگان مساوی دارد.
+      <div class="note danger" style="margin-top:18px">
+        <strong>⚠️ هشدار سازگاری:</strong> اگر با خطای مربوط به <code>DataFrame.map</code> مواجه شدید، نسخه‌ی <code>pandas</code> را به <strong>۲.۱ یا بالاتر</strong> ارتقا دهید:
+        <div class="code-box" style="margin-top:10px">
+          <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">bash</span></div>
+          <pre>pip install --upgrade "pandas&gt;=2.1"</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-### فرمول‌های نرخ برد
+<!-- ============ STRUCTURE ============ -->
+<section id="structure">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">سازمان‌دهی</span>
+      <h2>ساختار پروژه</h2>
+    </div>
 
-| معیار | فرمول |
-|:---|:---|
-| **نرخ برد TP1** | `تعداد TP / (تعداد SL + تعداد TP) × 100` |
-| **نرخ برد TP بهینه** | `تعداد برخوردها در سطح بهینه و بالاتر / کل معاملات × 100` |
+    <div class="code-box" style="margin-bottom:22px">
+      <div class="code-bar">
+        <span class="d d1"></span><span class="d d2"></span><span class="d d3"></span>
+        <span class="fn">LYM/</span>
+      </div>
+      <pre>LYM/
+│
+├── run.py                →  نقطه ورود اصلی — مدیریت ورودی، تحلیل و خروجی
+├── analyzer.py           →  توابع اصلی تحلیل (نرخ برد، پاداش‌ها، رکوردها و ...)
+├── dataset_maker.py      →  تولید دیتاست نمونه CSV برای تست
+├── requirements.txt      →  فهرست پیش‌نیازهای پایتونی پروژه
+├── SAMPLE_Excel.xlsx     →  نمونه فایل اکسل ورودی
+│
+├── SAVED_ADDRESS.txt     →  خودکار ساخته می‌شود — مسیر آخرین فایل اکسل
+├── my_dataset.csv        →  خودکار ساخته می‌شود — دیتاست نمونه
+├── your_dataset.csv      →  موقت — تبدیل‌شده از فایل اکسل ورودی
+├── Analyze_For_You.txt   →  خروجی — گزارش کامل تحلیل
+└── README.md             →  مستندات پروژه</pre>
+    </div>
 
-> در محاسبه‌ی نرخ برد بر اساس TP1، اگر استراتژی فقط TP داشته باشد نرخ برد ۱۰۰٪ و اگر فقط SL داشته باشد نرخ برد ۰٪ در نظر گرفته می‌شود.
+    <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:12px">فایل <code>requirements.txt</code></h3>
+    <div class="code-box">
+      <div class="code-bar"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="fn">requirements.txt</span></div>
+      <pre># Python &gt;= 3.8
+pandas&gt;=1.3
+numpy&gt;=1.20
+openpyxl&gt;=3.0</pre>
+    </div>
 
----
+    <div class="pill-list" style="justify-content:center;margin-top:28px">
+      <span><b>pandas</b> — پردازش داده</span>
+      <span><b>numpy</b> — محاسبات عددی</span>
+      <span><b>openpyxl</b> — خواندن فایل اکسل</span>
+    </div>
+  </div>
+</section>
 
-<a id="notes"></a>
-## نکات مهم
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="fbrand">LYM</div>
+    <p>
+      تحلیل‌گر استراتژی معاملاتی — نرخ برد، پاداش‌ها، TP بهینه و رکوردهای متوالی
+    </p>
+    <p>
+      <a href="https://github.com/kiarashsardari/LYM" target="_blank" rel="noopener">github.com/kiarashsardari/LYM</a>
+      <span class="fdot">•</span>
+      ساخته‌شده با <code>pandas</code>، <code>numpy</code> و <code>openpyxl</code>
+    </p>
+    <p style="margin-top:18px;color:#4a5563;font-size:.8rem">
+      © 2026 LYM — Trading Strategy Analyzer
+    </p>
+  </div>
+</footer>
 
-- فایل ورودی باید حداقل ستون‌های `date`، `position` و `strategy` را داشته باشد.
-- نام ستون‌ها به حروف کوچک و مقادیر رشته‌ای به حروف بزرگ تبدیل می‌شوند؛ بنابراین `Date` یا `Position` هم قابل قبول است.
-- مقادیر ستون `position` باید `SL` یا به شکل `TPn` باشند.
-- فایل ورودی باید پسوند `.xlsx` داشته باشد.
-- مسیر آخرین فایل اکسل در `SAVED_ADDRESS.txt` ذخیره می‌شود؛ در اجرای بعدی می‌توانید با زدن `O` همان فایل را دوباره تحلیل کنید.
-- فایل `your_dataset.csv` موقت است و در پایان اجرا حذف می‌شود.
-- فایل `Analyze_For_You.txt` در هر اجرا بازنویسی می‌شود.
-- اگر با خطای مربوط به `DataFrame.map` مواجه شدید، نسخه‌ی `pandas` را به ۲.۱ یا بالاتر ارتقا دهید.
+<script>
+  (function () {
+    var toggle = document.getElementById('menuToggle');
+    var links  = document.getElementById('navLinks');
+    if (!toggle || !links) return;
 
----
+    function closeMenu() {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }
 
-<div align="center">
+    toggle.addEventListener('click', function () {
+      var isOpen = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      toggle.textContent = isOpen ? '✕' : '☰';
+    });
 
-**ساخته‌شده با پایتون — با وابستگی خارجی به `pandas`، `numpy` و `openpyxl` (تعریف‌شده در `requirements.txt`)**
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeMenu);
+    });
 
-</div>
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 980) closeMenu();
+    });
+  })();
+</script>
+
+</body>
+</html>
