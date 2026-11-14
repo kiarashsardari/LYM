@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+
+
+# ساخت دیتاست نمونه
 def make_dataset():
     dates = np.arange('2026-01-01', '2027-01-01', dtype='datetime64[D]')
     l =  len(dates)
@@ -10,4 +13,7 @@ def make_dataset():
         ,'position': positions
         ,'strategy': strategies
     }
-    (pd.DataFrame(data)).to_csv(r'my_dataset.csv', index=False, encoding='utf-8-sig')
+    df = pd.DataFrame(data)
+    df.to_csv(r'sample_dataset.csv',index=False, encoding='utf-8-sig')
+    return df
+

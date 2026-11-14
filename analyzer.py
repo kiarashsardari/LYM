@@ -1,33 +1,41 @@
-class Settings:
-    # اندیس پوزیشن ورودی 
-    def find_andis(position):    
-        return int(position[2:]) if str(position).startswith('TP') else 1
-
-    
-    # لیست پوزیشن ها 
-    def positions_list(df):
-        return (df['position']).tolist()
-
-
-    # کلید مرتب سازی
-    def sort_key(p_r):
-        return 0 if p_r[0] == 'SL' else int(p_r[0][2:])
-
+# کار روی دیتافریم
+class DFSettings:
+    def __init__(self, df):
+        self.df = df
+        df = self.sort_df()
+        self.df = df        
 
     # مرتب کردن دیتافریم
-    def sdf(df):
-        df = df.map(lambda x: x.upper().strip()  if isinstance(x, str) else x)
+    def sort_df(self):
+        df = self.df
+        df = df.applymap(lambda x: x.upper().strip()  if isinstance(x, str) else x)
         df.columns = [
         c.lower().strip() if isinstance(c, str) else c
         for c in df.columns
         ]
         return df
 
+    # لیست پوزیشن ها 
+    def positions_list(self):
+        df = self.df
+        return (df['position']).tolist()
+    
+    @staticmethod
+    # اندیس پوزیشن ورودی 
+    def find_andis(position):    
+        return int(position[2:]) if str(position).startswith('TP') else 1
+
+    @staticmethod
+    # کلید مرتب سازی
+    def sort_key(p_r):
+        return 0 if p_r[0] == 'SL' else int(p_r[0][2:])
+
+
 
 # محاسبه نرخ ها و تعداد عناصر
 class Calculator:
     def __init__(self, df):
-        self.df = df
+        self.df = DFSettings(df).df
 
     # تعداد هر استراتژی
     def count_strategies(self):
@@ -40,7 +48,7 @@ class Calculator:
     def analyze_win_rate_by_tp1(self):
         df = self.df
         # یک سری از هر استراتژی و تعداد اس ال های اون
-        sl_size = (df[df['position'] == 'sl']).groupby('strategy').size().items()
+        sl_size = (df[df['position'] == 'SL']).groupby('strategy').size().items()
         # یک دیکشنری از هر استراتژی و تعداد تی پی های اون
         tp_size = dict((df[df['position'].str.startswith('TP')]).groupby('strategy').size().items())
         #دیکشنری خالی برای تولید دیکشنری از تعداد اس ال های هر استراتژی
@@ -87,11 +95,11 @@ class Calculator:
         p_count = self.positions_count().items()
         pos_rate = {}
         for pos, count in p_count:
-            andis = Settings.find_andis(pos)
+            andis = DFSettings.find_andis(pos)
             pos_rate[pos] = (count * andis)
-        return dict(sorted(pos_rate.items(), key=Settings.sort_key))
+        return dict(sorted(pos_rate.items(), key=DFSettings.sort_key))
 
-    # یافتن تی پی بهینه براساس پرتعداد بودن و اندیس کوچکتری داشتن
+    # یافتن تی پی بهینه براساس پرتعداد بودن
     def optimized_tp(self):
         rewards_tps = self.tp_rewards()
         if 'SL' in rewards_tps:
@@ -113,7 +121,7 @@ class Calculator:
             return {}
 
         for tp, _ in tps_rewards.items():
-            andis = Settings.find_andis(tp)
+            andis = DFSettings.find_andis(tp)
             tdf = df[df['position'] != 'SL']
             best_df = tdf[((tdf['position']).str.startswith('TP')) & ((tdf['position']).str[2:].astype(int)>=andis)]
             tps_counts[tp] = int(best_df['position'].value_counts().sum())
@@ -134,15 +142,14 @@ class Calculator:
             tps_rates[tp] = (count/trades_count)*100
         return tps_rates
 
-    # تعداد بیشترین تی پی های متوالی 
-    def consecutive_wins(self):
+    def _consecutive(self, condition_function):
         df = self.df
-        positions = Settings.positions_list(df)
+        positions = DFSettings(df).positions_list()
         lst = []
         n = 0
         for p in positions:
 
-            if str(p).startswith('TP'):
+            if  condition_function(str(p)):
                 n+=1
 
             else:
@@ -156,20 +163,8 @@ class Calculator:
 
     # تعداد بیشترین اس ال های متوالی 
     def consecutive_losses(self):
-        df = self.df
-        positions = Settings.positions_list(df)
-        lst = []
-        n = 0
-        for p in positions:
+        return self._consecutive(lambda x: "SL" == x)
 
-            if str(p) == 'SL':
-                n+=1
-
-            else:
-                lst.append(n)
-                n = 0
-                
-        if n != 0:
-            lst.append(n)
-
-        return max(lst) if lst else None
+    # تعداد بیشترین تی پی های متوالی 
+    def consecutive_wins(self):
+        return self._consecutive(lambda x: len(x) > 2 and x[0:2] == "TP")
